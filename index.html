@@ -3,10 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Oracle Learn | Somashekhar Hiremath</title>
+    <title>Oracle Learn Platform</title>
     <meta
       name="description"
-      content="Oracle Learn is a modern Oracle Database learning platform by Somashekhar Hiremath for beginners, students, and aspiring DBAs."
+      content="Oracle Learn is a modern Oracle Database learning platform for beginners, students, and aspiring DBAs."
     />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -26,9 +26,14 @@
         <div class="container hero-grid">
           <div class="hero-copy reveal">
             <p class="eyebrow">Oracle Database Learning Platform</p>
-            <h1>Somashekhar Hiremath</h1>
-            <p class="hero-title">Oracle DBA | Cybersecurity Enthusiast</p>
+            <h1>Oracle Learn</h1>
+            <p class="hero-title">Somashekhar Hiremath | Oracle DBA | Cybersecurity Enthusiast</p>
             <p class="hero-subtitle">Making Oracle Database simple for everyone.</p>
+            <div class="hero-badges" aria-label="Platform strengths">
+              <span class="hero-chip">Beginner to Advanced</span>
+              <span class="hero-chip">Real DBA Operations</span>
+              <span class="hero-chip">Security-Aligned Learning</span>
+            </div>
             <div class="hero-actions">
               <a class="btn btn-primary" href="modules.html">Start Learning</a>
               <a class="btn btn-secondary" href="architecture.html">Explore Architecture</a>
@@ -42,13 +47,13 @@
               <span class="dot green"></span>
               <span>oracle-learn@platform</span>
             </div>
-            <div class="terminal-body">
+            <div class="terminal-body" id="home-terminal-feed">
               <p><span class="prompt">$</span> learn --track oracle-dba</p>
-              <p>Beginner to Advanced modules loaded.</p>
-              <p><span class="prompt">$</span> focus --mode interview</p>
-              <p>Hands-on DBA tasks and command center ready.</p>
-              <p><span class="prompt">$</span> align --with cybersecurity</p>
-              <p>Security hardening and auditing workflows active.</p>
+              <p>Module path loaded: SQL -> Architecture -> Performance -> Recovery.</p>
+              <p><span class="prompt">$</span> practice --mode hands-on</p>
+              <p>Command center, DBA life tasks, labs, and quiz ready.</p>
+              <p><span class="prompt">$</span> secure --baseline</p>
+              <p>Hardening controls and audit workflows enabled.</p>
             </div>
           </aside>
         </div>
@@ -56,21 +61,83 @@
 
       <section class="section">
         <div class="container">
-          <h2 class="section-title reveal">Why Recruiters Notice This Project</h2>
+          <h2 class="section-title reveal">Learning Tracks</h2>
           <div class="card-grid three-col">
-            <article class="card feature-card reveal">
-              <h3>Beginner to Advanced</h3>
-              <p>Structured roadmap from SQL basics to performance tuning and recovery strategy.</p>
+            <article class="card track-card reveal">
+              <span class="badge Beginner">Beginner</span>
+              <h3>Foundations Track</h3>
+              <p>Start with SQL basics, database concepts, and the Oracle core components every learner must understand first.</p>
+              <ul class="track-list">
+                <li>Database fundamentals and SQL flow</li>
+                <li>Transaction basics: COMMIT and ROLLBACK</li>
+                <li>Guided practice in labs</li>
+              </ul>
+              <a class="btn btn-secondary" href="modules.html">Open Modules</a>
             </article>
-            <article class="card feature-card reveal">
-              <h3>Hands-on DBA</h3>
-              <p>Real commands, practical scenarios, and daily admin workflows that mirror production tasks.</p>
+
+            <article class="card track-card reveal">
+              <span class="badge Intermediate">Intermediate</span>
+              <h3>Operations Track</h3>
+              <p>Learn how Oracle actually works inside memory, processes, and storage with interactive architecture and dataflow.</p>
+              <ul class="track-list">
+                <li>Architecture breakdown with command checks</li>
+                <li>Dataflow animations for multiple SQL operations</li>
+                <li>DBA command workflows and scenarios</li>
+              </ul>
+              <a class="btn btn-secondary" href="architecture.html">Open Architecture</a>
             </article>
-            <article class="card feature-card reveal">
-              <h3>Security-aligned</h3>
-              <p>Oracle hardening, privilege control, auditing, and SQL injection prevention principles.</p>
+
+            <article class="card track-card reveal">
+              <span class="badge Advanced">Advanced</span>
+              <h3>Production Track</h3>
+              <p>Prepare for incidents, tuning, backup validation, and security hardening with practical DBA task simulations.</p>
+              <ul class="track-list">
+                <li>Day-in-the-life DBA operational checklists</li>
+                <li>Performance, lock, and recovery response</li>
+                <li>Hardening and auditing baseline controls</li>
+              </ul>
+              <a class="btn btn-secondary" href="dba-life.html">Open DBA Life</a>
             </article>
           </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container home-week-grid">
+          <article class="card reveal" id="home-week-focus" aria-live="polite">
+            <h2>This Week Focus</h2>
+            <p>Loading weekly learning focus...</p>
+          </article>
+          <article class="card reveal">
+            <h2>Platform Snapshot</h2>
+            <div class="home-stats-grid" id="home-platform-stats">
+              <div class="stat-card">
+                <strong>10</strong>
+                <span>Learning Pages</span>
+              </div>
+              <div class="stat-card">
+                <strong>50+</strong>
+                <span>DBA Commands</span>
+              </div>
+              <div class="stat-card">
+                <strong>30+</strong>
+                <span>Quiz Questions</span>
+              </div>
+              <div class="stat-card">
+                <strong>40+</strong>
+                <span>Interview Flashcards</span>
+              </div>
+            </div>
+            <p class="flow-desc">Use the roadmap page to follow week-by-week progression and track your completion path.</p>
+            <a class="btn btn-terminal" href="roadmap.html">Open Roadmap</a>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <h2 class="section-title reveal">Latest Troubleshooting Updates</h2>
+          <div id="home-blog-feed" class="card-grid three-col"></div>
         </div>
       </section>
 
@@ -78,21 +145,29 @@
         <div class="container">
           <h2 class="section-title reveal">Quick Access</h2>
           <div class="card-grid three-col">
-            <a class="card link-card reveal" href="roadmap.html">
-              <h3>6-Week Learning Path</h3>
-              <p>Track progress week-by-week with outcomes and practice checkpoints.</p>
+            <a class="card link-card reveal" href="modules.html">
+              <h3>Learning Modules</h3>
+              <p>Structured lessons from database fundamentals to architecture internals.</p>
+            </a>
+            <a class="card link-card reveal" href="commands.html">
+              <h3>DBA Command Center</h3>
+              <p>Search and filter Oracle/Linux commands with scenario-based usage guidance.</p>
             </a>
             <a class="card link-card reveal" href="labs.html">
               <h3>Practical Labs & Quiz</h3>
-              <p>Practice SQL, solve DBA scenarios, review flashcards, and test with quizzes.</p>
+              <p>Practice SQL, solve DBA scenarios, revise with flashcards, and score quizzes.</p>
             </a>
-            <a class="card link-card reveal" href="blog.html">
-              <h3>Troubleshooting Blog</h3>
-              <p>Read production-style Oracle issue breakdowns and recovery patterns.</p>
+            <a class="card link-card reveal" href="security.html">
+              <h3>Security & Hardening</h3>
+              <p>Implement privilege governance, auditing, encryption, and patching controls.</p>
             </a>
             <a class="card link-card reveal" href="resources.html">
               <h3>Reference Hub</h3>
-              <p>Official Oracle docs and trusted learning links organized by topic.</p>
+              <p>Official Oracle docs and trusted resources organized by topic and level.</p>
+            </a>
+            <a class="card link-card reveal" href="blog.html">
+              <h3>Troubleshooting Blog</h3>
+              <p>Study incident response patterns with commands, impact, and validation flow.</p>
             </a>
           </div>
         </div>
@@ -120,5 +195,6 @@
     </main>
     <div data-site-footer></div>
     <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/home.js"></script>
   </body>
 </html>

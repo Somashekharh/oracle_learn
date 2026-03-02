@@ -64,7 +64,7 @@ Then open `http://localhost:5500`.
 ## Content Volumes Included
 
 - Module lessons: `24`
-- Command entries: `100`
+- Command entries: `137`
 - Architecture nodes: `34`
 - Real DBA tasks: `7`
 - Lab items: `24`

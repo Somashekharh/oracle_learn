@@ -41,37 +41,64 @@
             <button class="chip" data-operation="COMMIT">COMMIT</button>
             <button class="chip" data-operation="ROLLBACK">ROLLBACK</button>
             <button class="chip" data-operation="DDL">DDL</button>
+            <button class="chip" data-operation="SELECT_FOR_UPDATE">SELECT FOR UPDATE</button>
+            <button class="chip" data-operation="BULK_LOAD">BULK LOAD</button>
+            <button class="chip" data-operation="FLASHBACK_QUERY">FLASHBACK QUERY</button>
           </div>
 
-          <div class="flow-lanes card">
-            <div class="flow-lane"><strong>Lane 1</strong><span>Parse and Plan</span></div>
-            <div class="flow-lane"><strong>Lane 2</strong><span>Execute and Change</span></div>
-            <div class="flow-lane"><strong>Lane 3</strong><span>Durability and Visibility</span></div>
-          </div>
-
-          <div class="flow-stage card">
-            <div id="flow-nodes" class="flow-nodes flow-nodes-grid" aria-label="Oracle data flow stages">
-              <div class="flow-node" data-stage="client_request">Client Request</div>
-              <div class="flow-node" data-stage="parse_check">Parse & Semantic Check</div>
-              <div class="flow-node" data-stage="optimize_cursor">Optimize & Cursor Build</div>
-              <div class="flow-node" data-stage="shared_pool">Shared Pool Lookup</div>
-              <div class="flow-node" data-stage="buffer_cache">Buffer Cache Access</div>
-              <div class="flow-node" data-stage="undo_segment">Undo Generation</div>
-              <div class="flow-node" data-stage="redo_buffer">Redo Buffer</div>
-              <div class="flow-node" data-stage="lgwr_flush">LGWR Flush</div>
-              <div class="flow-node" data-stage="dbwr_write">DBWn Checkpoint Write</div>
-              <div class="flow-node" data-stage="datafile_io">Datafile I/O</div>
-              <div class="flow-node" data-stage="archiver">Archive Processing</div>
-              <div class="flow-node" data-stage="result_return">Result / Visibility</div>
+          <div class="flow-layout">
+            <div class="flow-stage card reveal">
+              <div id="flow-nodes" class="flow-nodes flow-nodes-grid" aria-label="Oracle data flow stages">
+                <button class="flow-node" data-stage="client_request" type="button">Client Request</button>
+                <button class="flow-node" data-stage="parse_check" type="button">Parse & Semantic Check</button>
+                <button class="flow-node" data-stage="optimize_cursor" type="button">Optimize & Cursor Build</button>
+                <button class="flow-node" data-stage="shared_pool" type="button">Shared Pool Lookup</button>
+                <button class="flow-node" data-stage="buffer_cache" type="button">Buffer Cache Access</button>
+                <button class="flow-node" data-stage="undo_segment" type="button">Undo Generation</button>
+                <button class="flow-node" data-stage="redo_buffer" type="button">Redo Buffer</button>
+                <button class="flow-node" data-stage="lgwr_flush" type="button">LGWR Flush</button>
+                <button class="flow-node" data-stage="dbwr_write" type="button">DBWn Checkpoint Write</button>
+                <button class="flow-node" data-stage="datafile_io" type="button">Datafile I/O</button>
+                <button class="flow-node" data-stage="archiver" type="button">Archive Processing</button>
+                <button class="flow-node" data-stage="result_return" type="button">Result / Visibility</button>
+              </div>
+              <div class="flow-controls">
+                <button id="flow-prev" class="btn btn-secondary" type="button">Previous Step</button>
+                <button id="flow-next" class="btn btn-primary" type="button">Next Step</button>
+                <button id="flow-autoplay" class="btn btn-terminal" type="button">Auto Walk</button>
+                <button id="flow-stop" class="btn btn-secondary" type="button">Stop</button>
+                <button id="flow-replay" class="btn btn-secondary" type="button">Restart</button>
+                <label class="flow-speed-label" for="flow-speed">Speed</label>
+                <select id="flow-speed" class="flow-speed-select" aria-label="Auto walk speed">
+                  <option value="1700">Normal</option>
+                  <option value="1200">Fast</option>
+                  <option value="800">Very Fast</option>
+                </select>
+              </div>
             </div>
-            <div class="flow-controls">
-              <button id="flow-prev" class="btn btn-secondary" type="button">Previous Step</button>
-              <button id="flow-next" class="btn btn-primary" type="button">Next Step</button>
-              <button id="flow-replay" class="btn btn-terminal" type="button">Replay</button>
-            </div>
+
+            <aside class="flow-side">
+              <article class="card flow-lanes reveal">
+                <div class="flow-lane"><strong>Lane 1</strong><span>Parse and Plan</span></div>
+                <div class="flow-lane"><strong>Lane 2</strong><span>Execute and Change</span></div>
+                <div class="flow-lane"><strong>Lane 3</strong><span>Durability and Visibility</span></div>
+              </article>
+
+              <article class="card flow-overview reveal">
+                <p class="eyebrow">Operation Profile</p>
+                <h2 id="flow-operation-name">SELECT</h2>
+                <p><strong>Goal:</strong> <span id="flow-goal">Read consistent result sets.</span></p>
+                <p><strong>Transaction Class:</strong> <span id="flow-tx-class">Read-only.</span></p>
+                <p><strong>Lock Profile:</strong> <span id="flow-lock-profile">No row locks.</span></p>
+                <p><strong>Durability Rule:</strong> <span id="flow-durability">No commit durability event.</span></p>
+                <p><strong>DBA Focus:</strong> <span id="flow-dba-focus">Parse efficiency and I/O.</span></p>
+                <p><strong>Visited Components:</strong></p>
+                <div id="flow-components" class="flow-component-list"></div>
+              </article>
+            </aside>
           </div>
 
-          <article class="card flow-explain" aria-live="polite">
+          <article class="card flow-explain reveal" aria-live="polite">
             <p class="eyebrow" id="flow-operation-label">Operation: SELECT</p>
             <p class="eyebrow" id="flow-step-counter">Step 1 of 1</p>
             <h2 id="flow-step-title">Step details</h2>
@@ -82,6 +109,8 @@
             <pre id="flow-command-hint" class="code-block">SELECT * FROM employees WHERE department_id = 10;</pre>
             <p><strong>DBA Watchpoint:</strong> <span id="flow-watchpoint">Watchpoint details appear here.</span></p>
             <p><strong>Risk if Ignored:</strong> <span id="flow-risk">Risk details appear here.</span></p>
+            <p><strong>Flow Timeline:</strong></p>
+            <div id="flow-timeline" class="flow-timeline" aria-label="Operation timeline"></div>
           </article>
         </div>
       </section>
@@ -94,6 +123,8 @@
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">SQL Processing</a></li>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Transactions and Commit/Rollback Behavior</a></li>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Process Architecture (LGWR/DBWn/ARCn)</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/adfns/flashback.html" target="_blank" rel="noreferrer">Flashback Technologies</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-transactions.html" target="_blank" rel="noreferrer">Managing Transactions and Locks</a></li>
             </ul>
           </article>
         </div>

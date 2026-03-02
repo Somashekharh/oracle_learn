@@ -29,7 +29,48 @@
 
       <section class="section">
         <div class="container">
+          <div class="card roadmap-toolbar reveal">
+            <div class="roadmap-toolbar-row">
+              <div>
+                <p class="eyebrow">Tracking</p>
+                <h2>Weekly Progress Tracker</h2>
+                <p id="roadmap-summary">0 of 6 weeks completed.</p>
+                <p id="roadmap-current-week" class="eyebrow">Current focus week: Week 1</p>
+              </div>
+              <div class="roadmap-toolbar-actions">
+                <button class="btn btn-secondary" type="button" data-roadmap-filter="all">All Weeks</button>
+                <button class="btn btn-secondary" type="button" data-roadmap-filter="pending">Pending</button>
+                <button class="btn btn-secondary" type="button" data-roadmap-filter="done">Completed</button>
+                <button id="roadmap-reset" class="btn btn-terminal" type="button">Reset Progress</button>
+              </div>
+            </div>
+            <div class="roadmap-planner">
+              <label class="sr-only" for="roadmap-search">Search roadmap</label>
+              <input id="roadmap-search" class="search-input" type="search" placeholder="Search outcomes, milestones, checkpoints..." />
+              <label class="roadmap-date-label" for="roadmap-start-date">Study start date</label>
+              <input id="roadmap-start-date" class="roadmap-date-input" type="date" />
+              <p id="roadmap-forecast" class="eyebrow">Set a study start date to see target completion timeline.</p>
+            </div>
+            <div class="flow-progress-wrap" aria-label="Roadmap completion">
+              <div id="roadmap-progress" class="flow-progress"></div>
+            </div>
+            <p id="roadmap-hours" class="eyebrow">0 planned hours completed.</p>
+          </div>
+
           <div id="roadmap-track" class="roadmap-track"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card reveal">
+            <h2>Roadmap Study Strategy</h2>
+            <ul>
+              <li>Target 5 to 6 study days per week with one revision day.</li>
+              <li>Close each week by writing a short incident-style summary of what you learned.</li>
+              <li>Use command center and labs to verify every weekly deliverable hands-on.</li>
+            </ul>
+          </article>
         </div>
       </section>
     </main>

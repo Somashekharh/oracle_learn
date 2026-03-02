@@ -1,3 +1,106 @@
+/** @type {Record<string, import('./contracts.js').DataFlowOperationInfo>} */
+export const DATAFLOW_OPERATION_INFO = {
+  SELECT: {
+    id: "SELECT",
+    label: "SELECT",
+    goal: "Read consistent result sets with minimal latency.",
+    transactionClass: "Read-only (no explicit COMMIT required).",
+    lockProfile: "No row locks for normal consistent reads.",
+    durabilityRule: "No data change durability event.",
+    dbaFocus: "Parse efficiency, buffer cache hit ratio, and I/O latency."
+  },
+  INSERT: {
+    id: "INSERT",
+    label: "INSERT",
+    goal: "Add new rows safely with undo/redo generation.",
+    transactionClass: "DML transaction; COMMIT required for durability.",
+    lockProfile: "Row-level TX locks on inserted rows and related index entries.",
+    durabilityRule: "Redo must be flushed by LGWR at COMMIT.",
+    dbaFocus: "Undo sizing, redo rate, and commit batching."
+  },
+  UPDATE: {
+    id: "UPDATE",
+    label: "UPDATE",
+    goal: "Modify existing row values while preserving read consistency.",
+    transactionClass: "DML transaction; COMMIT required.",
+    lockProfile: "Row locks held until COMMIT/ROLLBACK.",
+    durabilityRule: "Redo flush controls commit latency.",
+    dbaFocus: "Blocking chains, long transactions, and plan quality."
+  },
+  DELETE: {
+    id: "DELETE",
+    label: "DELETE",
+    goal: "Remove targeted rows with rollback safety.",
+    transactionClass: "DML transaction; COMMIT required.",
+    lockProfile: "Row-level locks on deleted rows.",
+    durabilityRule: "Undo+redo generated for recoverability.",
+    dbaFocus: "Purge strategy, undo growth, and lock duration."
+  },
+  MERGE: {
+    id: "MERGE",
+    label: "MERGE",
+    goal: "Perform conditional UPSERT in one SQL statement.",
+    transactionClass: "DML transaction; COMMIT required.",
+    lockProfile: "Locks depend on matched UPDATE and unmatched INSERT paths.",
+    durabilityRule: "Redo generated across both branches.",
+    dbaFocus: "Join path efficiency, batch size, and contention."
+  },
+  COMMIT: {
+    id: "COMMIT",
+    label: "COMMIT",
+    goal: "Make transaction changes durable and visible.",
+    transactionClass: "Transaction-control (TCL).",
+    lockProfile: "Releases transaction-held row locks.",
+    durabilityRule: "Commit returns after redo flush (log file sync).",
+    dbaFocus: "LGWR performance, log sizing, and commit frequency."
+  },
+  ROLLBACK: {
+    id: "ROLLBACK",
+    label: "ROLLBACK",
+    goal: "Undo uncommitted changes to restore prior state.",
+    transactionClass: "Transaction-control (TCL).",
+    lockProfile: "Locks released after rollback completion.",
+    durabilityRule: "Rollback itself generates redo records.",
+    dbaFocus: "Large rollback timing and undo pressure."
+  },
+  DDL: {
+    id: "DDL",
+    label: "DDL",
+    goal: "Change object metadata safely with dictionary consistency.",
+    transactionClass: "DDL with implicit commit behavior.",
+    lockProfile: "May require metadata locks and object-level serialization.",
+    durabilityRule: "Dictionary redo persisted via LGWR.",
+    dbaFocus: "Change windows, dependent object invalidations, and auditing."
+  },
+  SELECT_FOR_UPDATE: {
+    id: "SELECT_FOR_UPDATE",
+    label: "SELECT FOR UPDATE",
+    goal: "Read and reserve rows for controlled business update.",
+    transactionClass: "Read + lock acquisition; COMMIT/ROLLBACK needed to release.",
+    lockProfile: "TX row locks on selected rows.",
+    durabilityRule: "Lock metadata and later DML redo are durable on commit.",
+    dbaFocus: "Blocking-session monitoring and timeout strategy."
+  },
+  BULK_LOAD: {
+    id: "BULK_LOAD",
+    label: "BULK LOAD",
+    goal: "Ingest large volumes with optimized direct path behavior.",
+    transactionClass: "High-volume DML; commit strategy is critical.",
+    lockProfile: "Can hold stronger locks depending on load mode.",
+    durabilityRule: "High redo rate unless NOLOGGING path is used.",
+    dbaFocus: "Redo/archivelog pressure, checkpoint behavior, and load windows."
+  },
+  FLASHBACK_QUERY: {
+    id: "FLASHBACK_QUERY",
+    label: "FLASHBACK QUERY",
+    goal: "Query past committed data using undo-based reconstruction.",
+    transactionClass: "Read-only historical query.",
+    lockProfile: "No DML row locking; depends on undo availability.",
+    durabilityRule: "No new data durability event; relies on retained undo.",
+    dbaFocus: "Undo retention sizing and ORA-01555 prevention."
+  }
+};
+
 /** @type {Record<string, import('./contracts.js').DataFlowStep[]>} */
 export const DATAFLOW_STEPS_BY_OPERATION = {
   SELECT: [
@@ -500,6 +603,185 @@ export const DATAFLOW_STEPS_BY_OPERATION = {
       commandHint: "SELECT object_name, object_type, status FROM user_objects ORDER BY created DESC FETCH FIRST 10 ROWS ONLY;",
       watchpoint: "Recompile or validate dependent objects after DDL if needed.",
       failureRisk: "Invalid dependent objects can break application runtime behavior.",
+      animationTargetIds: ["result_return"]
+    }
+  ],
+
+  SELECT_FOR_UPDATE: [
+    {
+      id: "sfu-1",
+      operation: "SELECT_FOR_UPDATE",
+      stage: "client_request",
+      explanation: "Session issues SELECT ... FOR UPDATE to reserve candidate rows before modification.",
+      commandHint: "SELECT employee_id, salary FROM hr.employees WHERE department_id = 60 FOR UPDATE NOWAIT;",
+      watchpoint: "Use NOWAIT/WAIT clauses to control blocking behavior.",
+      failureRisk: "Unbounded lock waits can stall transaction throughput and user experience.",
+      animationTargetIds: ["client_request"]
+    },
+    {
+      id: "sfu-2",
+      operation: "SELECT_FOR_UPDATE",
+      stage: "parse_check",
+      explanation: "Oracle validates syntax, privileges, and lock request semantics.",
+      commandHint: "SELECT sid, event, blocking_session FROM v$session WHERE event LIKE 'enq: TX%';",
+      watchpoint: "Track lock waits in v$session during high-concurrency windows.",
+      failureRisk: "Improper lock ordering increases deadlock risk.",
+      animationTargetIds: ["parse_check", "shared_pool"]
+    },
+    {
+      id: "sfu-3",
+      operation: "SELECT_FOR_UPDATE",
+      stage: "buffer_cache",
+      explanation: "Rows are read and corresponding row-level TX locks are taken.",
+      commandHint: "SELECT sid, serial#, blocking_session FROM v$session WHERE blocking_session IS NOT NULL;",
+      watchpoint: "Identify long-running lockers quickly.",
+      failureRisk: "Extended lock holding blocks downstream DML operations.",
+      animationTargetIds: ["buffer_cache"]
+    },
+    {
+      id: "sfu-4",
+      operation: "SELECT_FOR_UPDATE",
+      stage: "redo_buffer",
+      explanation: "Lock-related transaction metadata changes produce redo entries.",
+      commandHint: "SELECT name, value FROM v$sysstat WHERE name IN ('redo entries','user commits');",
+      watchpoint: "Commit quickly after business logic completes.",
+      failureRisk: "Slow mid-tier processing keeps locks open and escalates contention.",
+      animationTargetIds: ["redo_buffer"]
+    },
+    {
+      id: "sfu-5",
+      operation: "SELECT_FOR_UPDATE",
+      stage: "result_return",
+      explanation: "Rows are returned to client while remaining locked until COMMIT or ROLLBACK.",
+      commandHint: "COMMIT; -- release locks after update sequence",
+      watchpoint: "Validate application transaction boundaries.",
+      failureRisk: "Forgotten commits lead to blocked sessions and incidents.",
+      animationTargetIds: ["result_return"]
+    }
+  ],
+
+  BULK_LOAD: [
+    {
+      id: "bulk-1",
+      operation: "BULK_LOAD",
+      stage: "client_request",
+      explanation: "Bulk load job starts (for example INSERT /*+ APPEND */ or Data Pump import).",
+      commandHint: "INSERT /*+ APPEND */ INTO sales_fact SELECT * FROM sales_stage;",
+      watchpoint: "Schedule heavy loads during low-traffic windows.",
+      failureRisk: "Large load overlap with OLTP can cause severe latency spikes.",
+      animationTargetIds: ["client_request"]
+    },
+    {
+      id: "bulk-2",
+      operation: "BULK_LOAD",
+      stage: "optimize_cursor",
+      explanation: "Optimizer evaluates direct-path and parallel execution strategies.",
+      commandHint: "SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(NULL,NULL,'ALLSTATS LAST +PARALLEL'));",
+      watchpoint: "Validate degree of parallelism and plan shape.",
+      failureRisk: "Misconfigured parallelism can flood CPU and I/O.",
+      animationTargetIds: ["optimize_cursor", "shared_pool"]
+    },
+    {
+      id: "bulk-3",
+      operation: "BULK_LOAD",
+      stage: "redo_buffer",
+      explanation: "Large volume redo is generated (unless workload uses controlled NOLOGGING patterns).",
+      commandHint: "SELECT name, value FROM v$sysstat WHERE name IN ('redo size','redo entries');",
+      watchpoint: "Track redo MB/sec to protect log writer path.",
+      failureRisk: "Redo surge can trigger frequent log switches and commit waits.",
+      animationTargetIds: ["redo_buffer"]
+    },
+    {
+      id: "bulk-4",
+      operation: "BULK_LOAD",
+      stage: "lgwr_flush",
+      explanation: "LGWR flushes large redo bursts to online redo logs.",
+      commandHint: "SELECT event, total_waits FROM v$system_event WHERE event IN ('log file sync','log file parallel write');",
+      watchpoint: "Ensure redo storage latency remains stable during load.",
+      failureRisk: "Slow redo writes can back up application commits.",
+      animationTargetIds: ["lgwr_flush"]
+    },
+    {
+      id: "bulk-5",
+      operation: "BULK_LOAD",
+      stage: "dbwr_write",
+      explanation: "DBWn writes dirty blocks and checkpoints progress as workload advances.",
+      commandHint: "SELECT name, value FROM v$sysstat WHERE name='physical writes';",
+      watchpoint: "Observe checkpoint and write pressure.",
+      failureRisk: "Under-provisioned I/O can prolong load windows.",
+      animationTargetIds: ["dbwr_write", "datafile_io"]
+    },
+    {
+      id: "bulk-6",
+      operation: "BULK_LOAD",
+      stage: "archiver",
+      explanation: "ARCn archives completed redo logs produced during load cycle.",
+      commandHint: "SELECT process, status, log_sequence FROM v$archive_processes;",
+      watchpoint: "Verify archive destinations keep up with generated redo volume.",
+      failureRisk: "Archive lag can fill FRA and eventually halt DML.",
+      animationTargetIds: ["archiver"]
+    },
+    {
+      id: "bulk-7",
+      operation: "BULK_LOAD",
+      stage: "result_return",
+      explanation: "Load session commits and exposes newly loaded data to consumers.",
+      commandHint: "COMMIT; SELECT COUNT(*) FROM sales_fact;",
+      watchpoint: "Validate row counts and reconciliation metrics post-load.",
+      failureRisk: "Unvalidated loads can introduce silent data quality defects.",
+      animationTargetIds: ["result_return"]
+    }
+  ],
+
+  FLASHBACK_QUERY: [
+    {
+      id: "fbq-1",
+      operation: "FLASHBACK_QUERY",
+      stage: "client_request",
+      explanation: "Session requests historical view using AS OF TIMESTAMP/SCN.",
+      commandHint: "SELECT * FROM hr.employees AS OF TIMESTAMP (SYSTIMESTAMP - INTERVAL '10' MINUTE) WHERE employee_id = 100;",
+      watchpoint: "Use flashback queries for investigation before attempting recovery.",
+      failureRisk: "Assuming historical visibility exists without verifying undo retention.",
+      animationTargetIds: ["client_request"]
+    },
+    {
+      id: "fbq-2",
+      operation: "FLASHBACK_QUERY",
+      stage: "parse_check",
+      explanation: "Oracle validates SQL and resolves requested SCN/timestamp point.",
+      commandHint: "SELECT current_scn FROM v$database;",
+      watchpoint: "Correlate event timestamp with SCN window when possible.",
+      failureRisk: "Incorrect time reference can return misleading historical state.",
+      animationTargetIds: ["parse_check", "shared_pool"]
+    },
+    {
+      id: "fbq-3",
+      operation: "FLASHBACK_QUERY",
+      stage: "buffer_cache",
+      explanation: "Oracle reads current blocks and prepares consistent historical reconstruction.",
+      commandHint: "SELECT begin_time, maxquerylen FROM v$undostat ORDER BY begin_time DESC FETCH FIRST 10 ROWS ONLY;",
+      watchpoint: "Compare query lookback time with maxquerylen and retention.",
+      failureRisk: "Long lookback requests can fail with ORA-01555.",
+      animationTargetIds: ["buffer_cache"]
+    },
+    {
+      id: "fbq-4",
+      operation: "FLASHBACK_QUERY",
+      stage: "undo_segment",
+      explanation: "Undo records are applied logically to reconstruct row versions as of requested time.",
+      commandHint: "SELECT begin_time, undoblks, txncount FROM v$undostat ORDER BY begin_time DESC FETCH FIRST 6 ROWS ONLY;",
+      watchpoint: "Ensure undo tablespace sizing matches investigation/recovery needs.",
+      failureRisk: "Insufficient undo retention blocks forensic query capability.",
+      animationTargetIds: ["undo_segment", "buffer_cache"]
+    },
+    {
+      id: "fbq-5",
+      operation: "FLASHBACK_QUERY",
+      stage: "result_return",
+      explanation: "Historical result set is returned without affecting current committed data.",
+      commandHint: "-- read-only historical output returned to client",
+      watchpoint: "Cross-check historical rows against business timeline.",
+      failureRisk: "Wrong interpretation can lead to incorrect incident decisions.",
       animationTargetIds: ["result_return"]
     }
   ]

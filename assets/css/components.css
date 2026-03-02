@@ -25,6 +25,12 @@
   transform: translateY(-1px);
 }
 
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .btn-primary {
   background: linear-gradient(135deg, #0eb5e8, #21d8ff);
   color: #00111f;

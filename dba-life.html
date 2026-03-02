@@ -29,7 +29,29 @@
 
       <section class="section">
         <div class="container">
+          <div class="card task-toolbar reveal">
+            <label for="task-search" class="sr-only">Search tasks</label>
+            <input id="task-search" class="search-input" type="search" placeholder="Search tasks, commands, or risks..." />
+            <div id="task-cadence-filters" class="filter-row" role="group" aria-label="Filter by cadence"></div>
+            <div id="task-priority-filters" class="filter-row" role="group" aria-label="Filter by priority"></div>
+            <p id="task-count" class="eyebrow">Loading DBA task workflows...</p>
+          </div>
+
           <div id="task-grid" class="card-grid two-col"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card reveal">
+            <h2>Official References for Operational Runbooks</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/" target="_blank" rel="noreferrer">Oracle Database Administrator's Guide</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/" target="_blank" rel="noreferrer">Oracle Database Reference (Dynamic Performance Views)</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/bradv/" target="_blank" rel="noreferrer">Backup and Recovery User's Guide</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sbydb/" target="_blank" rel="noreferrer">Data Guard Concepts and Administration</a></li>
+            </ul>
+          </article>
         </div>
       </section>
     </main>

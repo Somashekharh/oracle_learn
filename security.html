@@ -28,41 +28,47 @@
       </section>
 
       <section class="section">
-        <div class="container card-grid two-col">
-          <article class="card">
-            <h2>User Privileges and Roles</h2>
-            <p>Apply least privilege with role-based grants and periodic entitlement reviews.</p>
-            <pre class="code-block">CREATE ROLE app_readonly;
-GRANT CREATE SESSION TO app_readonly;
-GRANT SELECT ON hr.employees TO app_readonly;
-GRANT app_readonly TO analyst_user;</pre>
-          </article>
+        <div class="container">
+          <div class="card security-toolbar reveal">
+            <label class="sr-only" for="security-search">Search security controls</label>
+            <input id="security-search" class="search-input" type="search" placeholder="Search controls, commands, and risks..." />
+            <div id="security-domain-filters" class="filter-row" role="group" aria-label="Filter by security domain"></div>
+            <div class="filter-row" role="group" aria-label="Filter by priority">
+              <button class="chip is-active" type="button" data-security-priority="all">All Priority</button>
+              <button class="chip" type="button" data-security-priority="Critical">Critical</button>
+              <button class="chip" type="button" data-security-priority="High">High</button>
+              <button class="chip" type="button" data-security-priority="Medium">Medium</button>
+            </div>
+            <p id="security-count" class="eyebrow">Loading security controls...</p>
+            <div class="flow-progress-wrap" aria-label="Hardening progress">
+              <div id="security-progress" class="flow-progress"></div>
+            </div>
+            <p id="security-progress-text" class="eyebrow">Checklist completion will appear here.</p>
+          </div>
 
-          <article class="card">
-            <h2>Auditing Basics</h2>
-            <p>Track sensitive activity and policy violations with unified auditing in Oracle.</p>
-            <pre class="code-block">CREATE AUDIT POLICY dba_changes
-ACTIONS ALTER USER, DROP USER, GRANT;
-AUDIT POLICY dba_changes;</pre>
-          </article>
+          <div id="security-control-grid" class="card-grid two-col"></div>
+        </div>
+      </section>
 
-          <article class="card">
-            <h2>SQL Injection Prevention</h2>
-            <p>Use bind variables, input validation, and controlled privilege boundaries in application schemas.</p>
-            <pre class="code-block">SELECT * FROM accounts WHERE user_id = :id;
--- Avoid concatenated dynamic SQL with user input</pre>
+      <section class="section">
+        <div class="container">
+          <article class="card reveal">
+            <h2>Security Incident Playbooks</h2>
+            <div id="security-playbooks" class="card-grid two-col"></div>
           </article>
+        </div>
+      </section>
 
-          <article class="card">
-            <h2>Database Hardening Checklist</h2>
-            <ul class="checklist">
-              <li>Disable unused accounts and lock default users.</li>
-              <li>Enforce strong password profiles and rotation windows.</li>
-              <li>Encrypt sensitive data at rest (TDE) and in transit (TLS).</li>
-              <li>Review PUBLIC grants and revoke unnecessary access.</li>
-              <li>Enable auditing for privileged operations and schema changes.</li>
-              <li>Patch database and OPatch inventory regularly.</li>
-              <li>Restrict network ACLs and listener access.</li>
+      <section class="section">
+        <div class="container">
+          <article class="card reveal">
+            <h2>Official Oracle Security References</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/" target="_blank" rel="noreferrer">Oracle Database Security Guide</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/configuring-privilege-and-role-authorization.html" target="_blank" rel="noreferrer">Privilege and Role Authorization</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/administering-the-audit-trail.html" target="_blank" rel="noreferrer">Administering Unified Audit Trail</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/asoag/configuring-transparent-data-encryption.html" target="_blank" rel="noreferrer">Transparent Data Encryption (TDE)</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/netrf/" target="_blank" rel="noreferrer">Oracle Net Services Reference (Listener/TLS)</a></li>
             </ul>
           </article>
         </div>
@@ -70,5 +76,6 @@ AUDIT POLICY dba_changes;</pre>
     </main>
     <div data-site-footer></div>
     <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/security.js"></script>
   </body>
 </html>

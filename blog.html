@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oracle Troubleshooting Blog | Oracle Learn</title>
-    <meta name="description" content="Static Oracle troubleshooting blog with searchable incident patterns and fixes." />
+    <meta name="description" content="Oracle troubleshooting knowledge base with searchable incidents, triage commands, and official references." />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -23,20 +23,34 @@
         <div class="container">
           <p class="eyebrow">Troubleshooting Knowledge Base</p>
           <h1>Oracle DBA Blog</h1>
-          <p class="lead">Search by error pattern, category, and practical fix path to learn production-minded troubleshooting.</p>
+          <p class="lead">Search production incidents, review triage commands, and study official Oracle references to build interview-ready troubleshooting confidence.</p>
         </div>
       </section>
 
       <section class="section">
         <div class="container blog-layout">
-          <aside class="card blog-sidebar">
-            <label class="sr-only" for="blog-search">Search blog</label>
-            <input id="blog-search" class="search-input" type="search" placeholder="Search title, tags, and summary..." />
-            <div id="blog-tags" class="filter-row" role="group" aria-label="Filter posts by tag"></div>
+          <aside class="card blog-sidebar reveal">
+            <div class="blog-sidebar-head">
+              <label class="sr-only" for="blog-search">Search blog</label>
+              <input id="blog-search" class="search-input" type="search" placeholder="Search title, symptoms, commands, and summary..." />
+
+              <label class="sr-only" for="blog-sort">Sort posts</label>
+              <select id="blog-sort" class="blog-sort" aria-label="Sort blog posts">
+                <option value="latest">Latest first</option>
+                <option value="oldest">Oldest first</option>
+                <option value="title">Title A-Z</option>
+              </select>
+
+              <div id="blog-tags" class="filter-row" role="group" aria-label="Filter posts by tag"></div>
+              <div class="blog-sidebar-actions">
+                <p id="blog-stats" class="eyebrow">Loading posts...</p>
+                <button id="blog-clear" class="btn btn-secondary" type="button">Clear Filters</button>
+              </div>
+            </div>
             <div id="blog-list" class="blog-list"></div>
           </aside>
 
-          <article class="card blog-detail" id="blog-detail" aria-live="polite">
+          <article class="card blog-detail reveal" id="blog-detail" aria-live="polite">
             <h2>Select a blog post</h2>
             <p>Use search or click a post to read the detailed troubleshooting guide.</p>
           </article>

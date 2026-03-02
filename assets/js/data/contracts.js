@@ -35,6 +35,17 @@
  */
 
 /**
+ * @typedef {Object} DataFlowOperationInfo
+ * @property {string} id
+ * @property {string} label
+ * @property {string} goal
+ * @property {string} transactionClass
+ * @property {string} lockProfile
+ * @property {string} durabilityRule
+ * @property {string} dbaFocus
+ */
+
+/**
  * @typedef {Object} CommandEntry
  * @property {string} id
  * @property {string} category
@@ -54,6 +65,11 @@
  * @property {string} riskIfSkipped
  * @property {string[]} steps
  * @property {string[]} commands
+ * @property {string=} cadence
+ * @property {string=} priority
+ * @property {string=} executionWindow
+ * @property {string=} slaTarget
+ * @property {string[]=} references
  */
 
 /**
@@ -62,6 +78,10 @@
  * @property {string} focus
  * @property {string[]} outcomes
  * @property {string[]} exercises
+ * @property {number=} estimatedHours
+ * @property {string=} milestone
+ * @property {string=} interviewCheckpoint
+ * @property {string[]=} deliverables
  */
 
 /**
@@ -100,8 +120,50 @@
  * @property {string} slug
  * @property {string[]} tags
  * @property {string} date
+ * @property {"Beginner"|"Intermediate"|"Advanced"} level
+ * @property {number} readMinutes
  * @property {string} summary
+ * @property {string} impact
+ * @property {string[]} symptoms
+ * @property {string[]} triageCommands
  * @property {string[]} body
+ * @property {{ label: string, url: string }[]} references
+ */
+
+/**
+ * @typedef {Object} SecurityControl
+ * @property {string} id
+ * @property {string} domain
+ * @property {"Critical"|"High"|"Medium"} priority
+ * @property {"Beginner"|"Intermediate"|"Advanced"} level
+ * @property {string} title
+ * @property {string} summary
+ * @property {string} whyImportant
+ * @property {string} verifyCommand
+ * @property {string} expectedOutput
+ * @property {string} riskIfMissed
+ * @property {string} reference
+ */
+
+/**
+ * @typedef {Object} SecurityPlaybook
+ * @property {string} id
+ * @property {string} title
+ * @property {string} trigger
+ * @property {string[]} steps
+ * @property {string[]} commands
+ * @property {string} reference
+ */
+
+/**
+ * @typedef {Object} ResourceLink
+ * @property {string} id
+ * @property {string} title
+ * @property {string} url
+ * @property {string} category
+ * @property {"Beginner"|"Intermediate"|"Advanced"} level
+ * @property {string} summary
+ * @property {string[]} tags
  */
 
 export {};

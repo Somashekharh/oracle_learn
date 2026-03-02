@@ -10,6 +10,12 @@ const tabPanels = {
 
 const labSearch = document.getElementById("lab-search");
 const labTypeButtons = Array.from(document.querySelectorAll("[data-lab-type]"));
+const labLevelButtons = Array.from(document.querySelectorAll("[data-lab-level]"));
+const labStatusButtons = Array.from(document.querySelectorAll("[data-lab-status]"));
+const labRandomBtn = document.getElementById("lab-random");
+const labResetBtn = document.getElementById("lab-reset-progress");
+const labCountEl = document.getElementById("lab-count");
+const labProgressEl = document.getElementById("lab-progress");
 const labGrid = document.getElementById("lab-grid");
 
 const flashcardWrap = document.getElementById("flashcard");
@@ -20,11 +26,21 @@ const flashPrev = document.getElementById("flashcard-prev");
 const flashFlip = document.getElementById("flashcard-flip");
 const flashNext = document.getElementById("flashcard-next");
 
+const STORAGE_KEY = "oracle_learn_labs_solved_v1";
+const LEVEL_ORDER = {
+  Beginner: 1,
+  Intermediate: 2,
+  Advanced: 3
+};
+
 let activeTab = "labs";
 let activeLabType = "all";
+let activeLabLevel = "all";
+let activeLabStatus = "all";
 let labSearchTerm = "";
 let flashIndex = 0;
 let flipped = false;
+let solvedLabs = loadSolvedLabs();
 
 function escapeHtml(value) {
   return value
@@ -33,6 +49,34 @@ function escapeHtml(value) {
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;")
     .replaceAll("'", "&#39;");
+}
+
+function loadSolvedLabs() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      return new Set();
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return new Set();
+    }
+    return new Set(parsed.filter((id) => LAB_ITEMS.some((item) => item.id === id)));
+  } catch {
+    return new Set();
+  }
+}
+
+function saveSolvedLabs() {
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(Array.from(solvedLabs)));
+  } catch {
+    // Ignore storage write failures in restricted browser modes.
+  }
+}
+
+function isSolved(id) {
+  return solvedLabs.has(id);
 }
 
 function renderTabState() {
@@ -53,11 +97,27 @@ function renderTabState() {
   });
 }
 
+function setActiveChip(buttons, attribute, value) {
+  buttons.forEach((button) => {
+    const current = button.getAttribute(attribute) || "all";
+    button.classList.toggle("is-active", current === value);
+  });
+}
+
 function filteredLabs() {
   const term = labSearchTerm.toLowerCase();
+
   return LAB_ITEMS.filter((item) => {
-    const typeMatch = activeLabType === "all" || item.type === activeLabType;
-    if (!typeMatch) {
+    if (activeLabType !== "all" && item.type !== activeLabType) {
+      return false;
+    }
+    if (activeLabLevel !== "all" && item.difficulty !== activeLabLevel) {
+      return false;
+    }
+    if (activeLabStatus === "solved" && !isSolved(item.id)) {
+      return false;
+    }
+    if (activeLabStatus === "pending" && isSolved(item.id)) {
       return false;
     }
 
@@ -67,7 +127,55 @@ function filteredLabs() {
 
     const corpus = `${item.type} ${item.title} ${item.prompt} ${item.solution} ${item.difficulty}`.toLowerCase();
     return corpus.includes(term);
+  }).sort((a, b) => {
+    const solvedOrder = Number(isSolved(a.id)) - Number(isSolved(b.id));
+    if (solvedOrder !== 0) {
+      return solvedOrder;
+    }
+    const typeOrder = a.type.localeCompare(b.type);
+    if (typeOrder !== 0) {
+      return typeOrder;
+    }
+    const levelOrder = (LEVEL_ORDER[a.difficulty] || 99) - (LEVEL_ORDER[b.difficulty] || 99);
+    if (levelOrder !== 0) {
+      return levelOrder;
+    }
+    return a.title.localeCompare(b.title);
   });
+}
+
+function renderLabStats(items) {
+  if (labCountEl) {
+    labCountEl.textContent = `Showing ${items.length} of ${LAB_ITEMS.length} labs`;
+  }
+  if (labProgressEl) {
+    labProgressEl.textContent = `Solved ${solvedLabs.size} of ${LAB_ITEMS.length} labs`;
+  }
+}
+
+function labCard(item) {
+  const solved = isSolved(item.id);
+  return `
+    <article class="card lab-card ${solved ? "is-solved" : ""}" id="lab-card-${escapeHtml(item.id)}">
+      <div class="meta-row">
+        <span class="tag">${escapeHtml(item.type)}</span>
+        <span class="badge ${item.difficulty}">${item.difficulty}</span>
+        <span class="tag">${solved ? "Solved" : "Pending"}</span>
+      </div>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p><strong>Practice:</strong> ${escapeHtml(item.prompt)}</p>
+      <details class="lab-solution">
+        <summary>Show model answer</summary>
+        <p>${escapeHtml(item.solution)}</p>
+      </details>
+      <div class="lab-actions">
+        <button class="copy-btn" type="button" data-copy-solution="${escapeHtml(item.solution)}">Copy Answer</button>
+        <button class="btn ${solved ? "btn-secondary" : "btn-terminal"}" type="button" data-lab-toggle="${escapeHtml(item.id)}">
+          ${solved ? "Mark Pending" : "Mark Solved"}
+        </button>
+      </div>
+    </article>
+  `;
 }
 
 function renderLabs() {
@@ -76,26 +184,28 @@ function renderLabs() {
   }
 
   const items = filteredLabs();
+  renderLabStats(items);
+
   if (!items.length) {
-    labGrid.innerHTML = `<article class="card"><h2>No labs found</h2><p>Try a different keyword or type filter.</p></article>`;
+    labGrid.innerHTML = `<article class="card"><h2>No labs found</h2><p>Try a different filter or keyword.</p></article>`;
     return;
   }
 
-  labGrid.innerHTML = items
-    .map(
-      (item) => `
-      <article class="card">
-        <div class="meta-row">
-          <span class="tag">${escapeHtml(item.type)}</span>
-          <span class="badge ${item.difficulty}">${item.difficulty}</span>
-        </div>
-        <h3>${escapeHtml(item.title)}</h3>
-        <p><strong>Practice:</strong> ${escapeHtml(item.prompt)}</p>
-        <p><strong>Model answer:</strong> ${escapeHtml(item.solution)}</p>
-      </article>
-    `
-    )
-    .join("");
+  labGrid.innerHTML = items.map((item) => labCard(item)).join("");
+}
+
+function copyText(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    return navigator.clipboard.writeText(text);
+  }
+
+  const temp = document.createElement("textarea");
+  temp.value = text;
+  document.body.append(temp);
+  temp.select();
+  document.execCommand("copy");
+  temp.remove();
+  return Promise.resolve();
 }
 
 function renderFlashcard() {
@@ -120,6 +230,18 @@ function moveFlashcard(direction) {
   setFlipped(false);
 }
 
+function highlightLabCard(labId) {
+  const card = document.getElementById(`lab-card-${labId}`);
+  if (!card) {
+    return;
+  }
+  card.classList.add("is-highlight");
+  card.scrollIntoView({ behavior: "smooth", block: "center" });
+  window.setTimeout(() => {
+    card.classList.remove("is-highlight");
+  }, 1200);
+}
+
 tabButtons.forEach((button) => {
   button.addEventListener("click", () => {
     activeTab = button.getAttribute("data-tab") || "labs";
@@ -130,8 +252,23 @@ tabButtons.forEach((button) => {
 labTypeButtons.forEach((button) => {
   button.addEventListener("click", () => {
     activeLabType = button.getAttribute("data-lab-type") || "all";
-    labTypeButtons.forEach((item) => item.classList.remove("is-active"));
-    button.classList.add("is-active");
+    setActiveChip(labTypeButtons, "data-lab-type", activeLabType);
+    renderLabs();
+  });
+});
+
+labLevelButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeLabLevel = button.getAttribute("data-lab-level") || "all";
+    setActiveChip(labLevelButtons, "data-lab-level", activeLabLevel);
+    renderLabs();
+  });
+});
+
+labStatusButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeLabStatus = button.getAttribute("data-lab-status") || "all";
+    setActiveChip(labStatusButtons, "data-lab-status", activeLabStatus);
     renderLabs();
   });
 });
@@ -143,6 +280,55 @@ labSearch?.addEventListener("input", (event) => {
   }
   labSearchTerm = target.value.trim();
   renderLabs();
+});
+
+labRandomBtn?.addEventListener("click", () => {
+  const visible = filteredLabs();
+  const pending = visible.filter((item) => !isSolved(item.id));
+  const source = pending.length ? pending : visible;
+  if (!source.length) {
+    return;
+  }
+  const selected = source[Math.floor(Math.random() * source.length)];
+  highlightLabCard(selected.id);
+});
+
+labResetBtn?.addEventListener("click", () => {
+  solvedLabs = new Set();
+  saveSolvedLabs();
+  renderLabs();
+});
+
+labGrid?.addEventListener("click", async (event) => {
+  const target = event.target;
+  if (!(target instanceof HTMLElement)) {
+    return;
+  }
+
+  if (target.matches("[data-copy-solution]")) {
+    const text = target.getAttribute("data-copy-solution") || "";
+    await copyText(text);
+    const original = target.textContent;
+    target.textContent = "Copied";
+    window.setTimeout(() => {
+      target.textContent = original;
+    }, 900);
+    return;
+  }
+
+  if (target.matches("[data-lab-toggle]")) {
+    const id = target.getAttribute("data-lab-toggle") || "";
+    if (!id) {
+      return;
+    }
+    if (isSolved(id)) {
+      solvedLabs.delete(id);
+    } else {
+      solvedLabs.add(id);
+    }
+    saveSolvedLabs();
+    renderLabs();
+  }
 });
 
 flashFlip?.addEventListener("click", () => setFlipped(!flipped));
@@ -162,6 +348,14 @@ document.addEventListener("keydown", (event) => {
     return;
   }
 
+  const target = event.target;
+  if (target instanceof HTMLElement) {
+    const tag = target.tagName.toUpperCase();
+    if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT" || tag === "BUTTON" || tag === "A") {
+      return;
+    }
+  }
+
   if (event.key === "ArrowRight") {
     moveFlashcard(1);
   }
@@ -171,5 +365,8 @@ document.addEventListener("keydown", (event) => {
 });
 
 renderTabState();
+setActiveChip(labTypeButtons, "data-lab-type", activeLabType);
+setActiveChip(labLevelButtons, "data-lab-level", activeLabLevel);
+setActiveChip(labStatusButtons, "data-lab-status", activeLabStatus);
 renderLabs();
 renderFlashcard();

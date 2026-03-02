@@ -31,52 +31,42 @@
       </section>
 
       <section class="section">
-        <div class="container card-grid two-col">
-          <article class="card">
-            <h2>Oracle Official Core Docs</h2>
-            <ul>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Process Architecture</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/memory-architecture.html" target="_blank" rel="noreferrer">Memory Architecture (SGA/PGA)</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/physical-storage-structures.html" target="_blank" rel="noreferrer">Physical Storage Structures</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Transactions and Consistency</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">SQL Processing</a></li>
-            </ul>
-          </article>
+        <div class="container">
+          <div class="card resources-toolbar reveal">
+            <label class="sr-only" for="resource-search">Search references</label>
+            <input id="resource-search" class="search-input" type="search" placeholder="Search docs, guides, and labs..." />
+            <div id="resource-category-filters" class="filter-row" role="group" aria-label="Filter by category"></div>
+            <div class="filter-row" role="group" aria-label="Filter by level">
+              <button class="chip is-active" type="button" data-resource-level="all">All Levels</button>
+              <button class="chip" type="button" data-resource-level="Beginner">Beginner</button>
+              <button class="chip" type="button" data-resource-level="Intermediate">Intermediate</button>
+              <button class="chip" type="button" data-resource-level="Advanced">Advanced</button>
+            </div>
+            <div class="resources-toolbar-actions">
+              <button id="resource-random" class="btn btn-terminal" type="button">Pick Random Resource</button>
+              <button id="resource-clear-bookmarks" class="btn btn-secondary" type="button">Clear Bookmarks</button>
+            </div>
+            <div class="resources-stats">
+              <p id="resource-count" class="eyebrow">Loading resource catalog...</p>
+              <p id="resource-bookmark-count" class="eyebrow">Bookmarked 0 resources</p>
+            </div>
+          </div>
 
-          <article class="card">
-            <h2>Operations and Backup</h2>
-            <ul>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/bradv/index.html" target="_blank" rel="noreferrer">Backup and Recovery User's Guide</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/rcmrf/index.html" target="_blank" rel="noreferrer">RMAN Reference</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sutil/oracle-data-pump-overview.html" target="_blank" rel="noreferrer">Oracle Data Pump Overview</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sbydb/index.html" target="_blank" rel="noreferrer">Data Guard Concepts and Administration</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/index.html" target="_blank" rel="noreferrer">Reference for Dynamic Performance Views</a></li>
-            </ul>
-          </article>
+          <div id="resource-grid" class="card-grid two-col"></div>
+        </div>
+      </section>
 
-          <article class="card">
-            <h2>SQL and Performance Learning</h2>
-            <ul>
-              <li><a href="https://livesql.oracle.com/" target="_blank" rel="noreferrer">Oracle Live SQL</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/index.html" target="_blank" rel="noreferrer">SQL Tuning Guide</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgdba/index.html" target="_blank" rel="noreferrer">Performance Tuning Guide</a></li>
-              <li><a href="https://asktom.oracle.com/" target="_blank" rel="noreferrer">Ask TOM (Oracle Experts)</a></li>
-            </ul>
-          </article>
-
-          <article class="card">
-            <h2>Linux and Platform References</h2>
-            <ul>
-              <li><a href="https://docs.oracle.com/en/operating-systems/oracle-linux/" target="_blank" rel="noreferrer">Oracle Linux Documentation</a></li>
-              <li><a href="https://docs.oracle.com/en/learn/ol-linux-command-line/" target="_blank" rel="noreferrer">Oracle Linux Command Line Labs</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/rilin/index.html" target="_blank" rel="noreferrer">Oracle Database Installation Guide for Linux</a></li>
-              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/unxar/administering-oracle-database-on-linux-and-unix-systems.html" target="_blank" rel="noreferrer">Administering Oracle on Linux/UNIX</a></li>
-            </ul>
+      <section class="section">
+        <div class="container">
+          <article class="card reveal">
+            <h2>Bookmarked References</h2>
+            <div id="resource-bookmarks" class="resource-bookmark-list"></div>
           </article>
         </div>
       </section>
     </main>
     <div data-site-footer></div>
     <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/resources.js"></script>
   </body>
 </html>

@@ -46,6 +46,25 @@
                 <button class="chip" data-lab-type="Mini Challenge">Mini Challenge</button>
                 <button class="chip" data-lab-type="Interview Q&A">Interview Q&A</button>
               </div>
+              <div class="filter-row" role="group" aria-label="Filter labs by difficulty">
+                <button class="chip is-active" data-lab-level="all">All Levels</button>
+                <button class="chip" data-lab-level="Beginner">Beginner</button>
+                <button class="chip" data-lab-level="Intermediate">Intermediate</button>
+                <button class="chip" data-lab-level="Advanced">Advanced</button>
+              </div>
+              <div class="filter-row" role="group" aria-label="Filter labs by solved status">
+                <button class="chip is-active" data-lab-status="all">All Status</button>
+                <button class="chip" data-lab-status="pending">Pending</button>
+                <button class="chip" data-lab-status="solved">Solved</button>
+              </div>
+              <div class="lab-toolbar-actions">
+                <button id="lab-random" class="btn btn-terminal" type="button">Random Challenge</button>
+                <button id="lab-reset-progress" class="btn btn-secondary" type="button">Reset Solved</button>
+              </div>
+              <div class="lab-stats">
+                <p id="lab-count" class="eyebrow">Loading labs...</p>
+                <p id="lab-progress" class="eyebrow">Solved 0 of 0 labs</p>
+              </div>
             </div>
             <div id="lab-grid" class="card-grid two-col"></div>
           </section>
@@ -80,6 +99,20 @@
               <p id="quiz-score" class="quiz-score">Score: 0</p>
             </article>
           </section>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card">
+            <h2>Official References for Lab Practice</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/" target="_blank" rel="noreferrer">Oracle SQL Language Reference</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/" target="_blank" rel="noreferrer">Oracle Database Administrator's Guide</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/refrn/" target="_blank" rel="noreferrer">Oracle Database Reference</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/bradv/" target="_blank" rel="noreferrer">Backup and Recovery User's Guide</a></li>
+            </ul>
+          </article>
         </div>
       </section>
     </main>

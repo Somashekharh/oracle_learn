@@ -9,6 +9,11 @@ const countEl = document.getElementById("command-count");
 let searchTerm = "";
 let activeLevel = "all";
 let activeCategory = "all";
+const LEVEL_ORDER = {
+  Beginner: 1,
+  Intermediate: 2,
+  Advanced: 3
+};
 
 function escapeHtml(value) {
   return value
@@ -24,10 +29,17 @@ function renderCategoryFilters() {
     return;
   }
 
+  const counts = COMMAND_ENTRIES.reduce((acc, entry) => {
+    const current = acc.get(entry.category) || 0;
+    acc.set(entry.category, current + 1);
+    return acc;
+  }, new Map());
+
   const buttons = ["all", ...COMMAND_CATEGORIES]
     .map((category) => {
       const isActive = category === activeCategory;
-      const label = category === "all" ? "All Categories" : category;
+      const count = category === "all" ? COMMAND_ENTRIES.length : counts.get(category) || 0;
+      const label = category === "all" ? `All Categories (${count})` : `${category} (${count})`;
       return `<button class="chip ${isActive ? "is-active" : ""}" data-command-category="${category}">${label}</button>`;
     })
     .join("");
@@ -59,18 +71,47 @@ function filteredCommands() {
     }
 
     const corpus = [
+      entry.id,
       entry.category,
       entry.syntax,
       entry.explanation,
       entry.scenario,
       entry.level,
+      entry.outputExample,
       ...entry.commonMistakes
     ]
       .join(" ")
       .toLowerCase();
 
     return corpus.includes(term);
+  }).sort((a, b) => {
+    const categoryOrder = a.category.localeCompare(b.category);
+    if (categoryOrder !== 0) {
+      return categoryOrder;
+    }
+
+    const levelOrder = (LEVEL_ORDER[a.level] || 99) - (LEVEL_ORDER[b.level] || 99);
+    if (levelOrder !== 0) {
+      return levelOrder;
+    }
+
+    return a.syntax.localeCompare(b.syntax);
   });
+}
+
+function makeCommandTitle(syntax) {
+  const normalized = syntax
+    .replace(/^RMAN>\s*/i, "")
+    .replace(/^DGMGRL>\s*/i, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/;$/, "");
+
+  if (normalized.length <= 68) {
+    return normalized;
+  }
+
+  return `${normalized.slice(0, 65)}...`;
 }
 
 function renderCommands() {
@@ -95,8 +136,9 @@ function renderCommands() {
           <p class="badge ${entry.level}">${entry.level}</p>
           <span class="tag">${escapeHtml(entry.category)}</span>
         </div>
-        <h3>${escapeHtml(entry.syntax.split(" ")[0])} Command</h3>
+        <h3>${escapeHtml(makeCommandTitle(entry.syntax))}</h3>
         <p>${escapeHtml(entry.explanation)}</p>
+        <p><strong>Command Ref:</strong> ${escapeHtml(entry.id.toUpperCase())}</p>
         <div class="card-actions">
           <button class="copy-btn" type="button" data-copy="${escapeHtml(entry.syntax)}" aria-label="Copy command syntax">Copy command</button>
         </div>

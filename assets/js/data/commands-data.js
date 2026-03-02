@@ -1054,6 +1054,379 @@ const MULTITENANT_COMMANDS = [
   )
 ];
 
+const COMMAND_EXPANSION = [
+  createCommand(
+    "usr-09",
+    "User Management",
+    "Beginner",
+    "ALTER USER app_user PASSWORD EXPIRE;",
+    "Forces password reset at next successful login.",
+    "Enforce immediate credential rotation after temporary password issue.",
+    ["Expiring service-account passwords without app owner coordination.", "No communication window for interactive users."],
+    "User altered."
+  ),
+  createCommand(
+    "usr-10",
+    "User Management",
+    "Intermediate",
+    "ALTER USER app_user DEFAULT TABLESPACE app_data TEMPORARY TABLESPACE temp;",
+    "Sets permanent and temporary tablespaces for controlled object placement.",
+    "Correct user provisioning drift where objects were created in USERS tablespace.",
+    ["Default tablespace missing quota.", "Assigning temporary tablespace that is offline."],
+    "User altered."
+  ),
+  createCommand(
+    "usr-11",
+    "User Management",
+    "Advanced",
+    "SELECT grantee, granted_role, admin_option FROM dba_role_privs WHERE grantee='APP_USER';",
+    "Audits role-based entitlements for a user.",
+    "Privilege review before production go-live signoff.",
+    ["Checking only system privileges and missing role grants.", "Ignoring ADMIN_OPTION privilege escalation risk."],
+    "GRANTEE  GRANTED_ROLE   ADMIN_OPTION\nAPP_USER APP_READONLY   NO"
+  ),
+  createCommand(
+    "tbs-09",
+    "Tablespace Management",
+    "Beginner",
+    "SELECT df.tablespace_name, ROUND((df.bytes - fs.bytes_free)/1024/1024,2) used_mb, ROUND(fs.bytes_free/1024/1024,2) free_mb FROM (SELECT tablespace_name, SUM(bytes) bytes FROM dba_data_files GROUP BY tablespace_name) df JOIN (SELECT tablespace_name, SUM(bytes) bytes_free FROM dba_free_space GROUP BY tablespace_name) fs ON df.tablespace_name = fs.tablespace_name ORDER BY free_mb;",
+    "Calculates free and used capacity using datafile and free-space views.",
+    "Validate exact free MB before adding datafiles.",
+    ["Ignoring locally managed autoextend behavior.", "Assuming percent usage alone is enough for capacity planning."],
+    "TABLESPACE_NAME USED_MB FREE_MB\nAPP_DATA       15234   3120"
+  ),
+  createCommand(
+    "tbs-10",
+    "Tablespace Management",
+    "Intermediate",
+    "ALTER USER app_user QUOTA 2G ON app_data;",
+    "Limits schema growth in a target tablespace.",
+    "Prevent one schema from exhausting shared storage.",
+    ["Setting low quota and causing unexpected insert failures.", "Forgetting to grant quota on required tablespaces."],
+    "User altered."
+  ),
+  createCommand(
+    "tbs-11",
+    "Tablespace Management",
+    "Advanced",
+    "SELECT tablespace_name, status, contents, extent_management, segment_space_management FROM dba_tablespaces ORDER BY tablespace_name;",
+    "Provides structural metadata for each tablespace.",
+    "Post-migration validation of LMT/ASSM settings.",
+    ["Overlooking undo/temp tablespace attributes.", "Running with insufficient privileges in non-DBA account."],
+    "TABLESPACE_NAME STATUS  CONTENTS   EXTENT_MANAGEMENT SEGMENT_SPACE_MANAGEMENT\nAPP_DATA        ONLINE  PERMANENT LOCAL             AUTO"
+  ),
+  createCommand(
+    "perf-09",
+    "Performance Monitoring",
+    "Intermediate",
+    "SELECT begin_time, end_time, value FROM v$sysmetric WHERE metric_name='Host CPU Utilization (%)' ORDER BY begin_time DESC FETCH FIRST 5 ROWS ONLY;",
+    "Shows recent host CPU utilization trend from Oracle metrics.",
+    "Confirm whether DB slowdown aligns with host CPU saturation.",
+    ["Checking only one snapshot and missing trend context.", "Ignoring caging or VM limits when interpreting CPU usage."],
+    "BEGIN_TIME           END_TIME             VALUE\n02-MAR-26 10:10:00   02-MAR-26 10:11:00  82.4"
+  ),
+  createCommand(
+    "perf-10",
+    "Performance Monitoring",
+    "Advanced",
+    "SELECT session_id, session_serial#, sql_id, event, wait_class FROM v$active_session_history WHERE sample_time > SYSDATE - (5/1440) ORDER BY sample_time DESC FETCH FIRST 30 ROWS ONLY;",
+    "Samples recent active-session history to identify dominant waits and SQL IDs.",
+    "Rapid incident triage without waiting for full AWR report.",
+    ["Using ASH in unsupported editions.", "Reading samples as exact totals instead of representative activity."],
+    "SESSION_ID SQL_ID   EVENT                    WAIT_CLASS\n128       7d2a... db file sequential read   User I/O"
+  ),
+  createCommand(
+    "perf-11",
+    "Performance Monitoring",
+    "Advanced",
+    "SELECT sql_id, plan_hash_value, executions, buffer_gets, rows_processed FROM v$sql ORDER BY buffer_gets DESC FETCH FIRST 10 ROWS ONLY;",
+    "Highlights buffer-heavy SQL that may cause logical I/O pressure.",
+    "Find statements polluting buffer cache during peak usage.",
+    ["Comparing statements with very different execution counts without normalization.", "Ignoring bind-aware plan variants."],
+    "SQL_ID   PLAN_HASH_VALUE EXECUTIONS BUFFER_GETS\n1f2k... 23282911        9200       42911233"
+  ),
+  createCommand(
+    "bkp-09",
+    "Backup & Recovery",
+    "Beginner",
+    "SELECT destination, status, error FROM v$archive_dest WHERE target='PRIMARY' ORDER BY dest_id;",
+    "Checks archive destination health and transport errors.",
+    "Daily backup readiness check before nightly jobs.",
+    ["Ignoring ERROR column when status appears VALID.", "Not monitoring secondary archive destinations."],
+    "DESTINATION                        STATUS ERROR\n/u02/arch                            VALID  <null>"
+  ),
+  createCommand(
+    "bkp-10",
+    "Backup & Recovery",
+    "Intermediate",
+    "RMAN> BACKUP CURRENT CONTROLFILE;",
+    "Creates immediate controlfile backup outside regular window.",
+    "Take safety backup before risky structural changes.",
+    ["Assuming autobackup already exists and skipping manual backup.", "Not storing backup location details in ticket."],
+    "channel ORA_DISK_1: piece handle=... tag=TAG..."
+  ),
+  createCommand(
+    "bkp-11",
+    "Backup & Recovery",
+    "Advanced",
+    "RMAN> RECOVER DATAFILE 7;",
+    "Applies redo to a restored datafile until consistency is reached.",
+    "Finalize single-datafile recovery after storage corruption.",
+    ["Running recover before restore completes.", "Recovering wrong file ID from incorrect incident mapping."],
+    "media recovery complete"
+  ),
+  createCommand(
+    "lck-09",
+    "Lock Monitoring",
+    "Beginner",
+    "SELECT sid, type, id1, id2, lmode, request, block FROM v$lock WHERE block = 1 OR request > 0;",
+    "Displays lock structures for blockers and waiters at low level.",
+    "Cross-check lock chain during severe contention incident.",
+    ["Interpreting lock mode codes without mapping documentation.", "Taking action without joining to session/user context."],
+    "SID TYPE ID1    ID2 LMODE REQUEST BLOCK\n128 TX   98341  0   6     0       1"
+  ),
+  createCommand(
+    "lck-10",
+    "Lock Monitoring",
+    "Intermediate",
+    "ALTER SYSTEM DISCONNECT SESSION '128,9912' POST_TRANSACTION;",
+    "Disconnects session after it completes current transaction.",
+    "Gracefully drain problematic client session without immediate rollback.",
+    ["Using POST_TRANSACTION when blocker is holding long uncommitted TX.", "Wrong SID,SERIAL# in busy systems."],
+    "System altered."
+  ),
+  createCommand(
+    "lck-11",
+    "Lock Monitoring",
+    "Advanced",
+    "SELECT sid, serial#, username, osuser, machine, module, program FROM v$session WHERE sid = 128;",
+    "Captures ownership metadata before killing or disconnecting sessions.",
+    "Incident evidence collection and safe owner validation.",
+    ["Skipping owner validation and terminating critical batch session.", "Not recording module/program for RCA."],
+    "SID SERIAL# USERNAME OSUSER MACHINE MODULE PROGRAM\n128 9912 APPUSR appsvc app01 JDBC Thin Client"
+  ),
+  createCommand(
+    "dp-09",
+    "Data Pump",
+    "Beginner",
+    "CREATE DIRECTORY dp_dir AS '/u02/dpump';",
+    "Creates database directory object mapped to OS path for Data Pump.",
+    "Initial setup for controlled export/import location.",
+    ["OS directory missing write permission for Oracle user.", "Using shared path without capacity checks."],
+    "Directory created."
+  ),
+  createCommand(
+    "dp-10",
+    "Data Pump",
+    "Beginner",
+    "GRANT READ, WRITE ON DIRECTORY dp_dir TO app_user;",
+    "Grants directory object permissions needed for Data Pump access.",
+    "Delegate schema-level exports to non-SYS account.",
+    ["Granting to PUBLIC or broad roles unnecessarily.", "Granting directory privileges without audit controls."],
+    "Grant succeeded."
+  ),
+  createCommand(
+    "dp-11",
+    "Data Pump",
+    "Advanced",
+    "impdp system DIRECTORY=dp_dir DUMPFILE=hr_schema.dmp SQLFILE=hr_preview.sql CONTENT=METADATA_ONLY",
+    "Generates import DDL preview script without changing database.",
+    "Review object DDL and dependencies before migration cutover.",
+    ["Assuming SQLFILE validates runtime data load behavior.", "Not reviewing generated grants and storage clauses."],
+    "Master table \"SYSTEM\".\"SYS_SQL_FILE_FULL_01\" successfully loaded"
+  ),
+  createCommand(
+    "rman-09",
+    "RMAN",
+    "Beginner",
+    "RMAN> CONFIGURE CONTROLFILE AUTOBACKUP ON;",
+    "Enables automatic controlfile/SPFILE backup after backup jobs.",
+    "Improve recoverability when repository metadata is damaged.",
+    ["Assuming autobackup is enabled by default.", "Not validating autobackup restore path."],
+    "new RMAN configuration parameters are successfully stored"
+  ),
+  createCommand(
+    "rman-10",
+    "RMAN",
+    "Intermediate",
+    "RMAN> LIST ARCHIVELOG ALL;",
+    "Lists archived redo logs known to RMAN repository.",
+    "Validate log availability before point-in-time recovery.",
+    ["Checking only filesystem and not RMAN metadata.", "Ignoring gaps in sequence continuity."],
+    "List of Archived Log Copies"
+  ),
+  createCommand(
+    "rman-11",
+    "RMAN",
+    "Advanced",
+    "RMAN> DELETE EXPIRED BACKUP;",
+    "Removes repository records for backups missing on disk/tape after crosscheck.",
+    "Clean stale metadata to avoid restore confusion.",
+    ["Running DELETE EXPIRED before CROSSCHECK BACKUP.", "Confusing EXPIRED with OBSOLETE retention cleanup."],
+    "deleted backup piece\nbackup piece handle=..."
+  ),
+  createCommand(
+    "lin-13",
+    "Linux for DBA",
+    "Intermediate",
+    "tnsping ORCL",
+    "Tests Oracle Net connectivity and basic name resolution to target service.",
+    "First-pass validation when application reports intermittent login failures.",
+    ["Assuming tnsping validates database authentication.", "Testing from wrong ORACLE_HOME/network admin context."],
+    "OK (20 msec)"
+  ),
+  createCommand(
+    "lin-14",
+    "Linux for DBA",
+    "Intermediate",
+    "pidstat -p <oracle_spid> 1 5",
+    "Samples CPU usage of a specific Oracle OS process over time.",
+    "Correlate a hot session SPID to sustained host CPU burn.",
+    ["Using one-time ps output and missing burst behavior.", "Not mapping DB SID to SPID first."],
+    "Linux ...\nAverage:      UID       PID    %usr %system  %CPU   Command\nAverage:      54321     30111   71.2   12.4   83.6 ora_dbw0_ORCL"
+  ),
+  createCommand(
+    "lin-15",
+    "Linux for DBA",
+    "Advanced",
+    "find $ORACLE_BASE/diag/rdbms -type f -name '*.trc' -mtime +14 -print",
+    "Finds old trace files suitable for controlled cleanup review.",
+    "Reduce diagnostic mount growth after major incident period.",
+    ["Deleting traces before RCA closure.", "Removing active trace files without ADRCI policy."],
+    "/u01/app/oracle/diag/rdbms/orcl/ORCL/trace/ORCL_ora_19312.trc"
+  ),
+  createCommand(
+    "lin-16",
+    "Linux for DBA",
+    "Advanced",
+    "lsof | grep -E 'alert_ORCL\\.log|\\.dbf|\\.arc' | head -20",
+    "Shows open file handles for Oracle-related logs/datafiles/archive files.",
+    "Confirm which process still holds files before storage maintenance.",
+    ["Running lsof without root where required and assuming empty output means no handles.", "Using broad grep patterns causing noisy false matches."],
+    "oracle 30111 oracle  24w REG 253,1 ... /u01/oradata/ORCL/users01.dbf"
+  ),
+  createCommand(
+    "stp-09",
+    "Startup & Maintenance",
+    "Beginner",
+    "SHUTDOWN TRANSACTIONAL;",
+    "Blocks new transactions and waits for active ones to complete before shutdown.",
+    "Controlled maintenance when immediate rollback risk is high.",
+    ["Using transactional shutdown during outage where speed is critical.", "Forgetting long transactions can delay shutdown significantly."],
+    "Database closed. Database dismounted. ORACLE instance shut down."
+  ),
+  createCommand(
+    "stp-10",
+    "Startup & Maintenance",
+    "Intermediate",
+    "ALTER DATABASE OPEN READ ONLY;",
+    "Opens database in read-only mode for reporting or diagnostics.",
+    "Validation checks on restored clone before enabling writes.",
+    ["Attempting DML in read-only mode.", "Confusing read-only with guaranteed no redo generation scenarios."],
+    "Database altered."
+  ),
+  createCommand(
+    "stp-11",
+    "Startup & Maintenance",
+    "Advanced",
+    "SELECT name, value FROM v$parameter WHERE name IN ('db_name','db_unique_name','open_cursors','processes');",
+    "Pulls key runtime parameter values for baseline verification.",
+    "Post-startup sanity check after parameter change deployment.",
+    ["Comparing with outdated baseline docs.", "Ignoring SPFILE vs memory differences after dynamic changes."],
+    "NAME            VALUE\nprocesses       1200\nopen_cursors    600"
+  ),
+  createCommand(
+    "sec-09",
+    "Security & Auditing",
+    "Beginner",
+    "REVOKE CREATE SESSION FROM app_readonly;",
+    "Removes login capability from role or user during access rollback.",
+    "Emergency containment for compromised account path.",
+    ["Revoking from shared role without impact analysis.", "No change ticket evidence for emergency action."],
+    "Revoke succeeded."
+  ),
+  createCommand(
+    "sec-10",
+    "Security & Auditing",
+    "Intermediate",
+    "SELECT policy_name, enabled_opt, user_name, entity_name FROM audit_unified_enabled_policies ORDER BY policy_name;",
+    "Lists unified audit policies currently enabled.",
+    "Validate that mandated audit policies are active after patching.",
+    ["Assuming policy exists implies enabled.", "Ignoring user-scoped policy enablement."],
+    "POLICY_NAME ENABLED_OPT USER_NAME ENTITY_NAME\nDBA_CHANGES BY USER   SYS       <null>"
+  ),
+  createCommand(
+    "sec-11",
+    "Security & Auditing",
+    "Advanced",
+    "SELECT username, authentication_type, profile, account_status FROM dba_users ORDER BY username;",
+    "Combines auth model and profile state for security posture review.",
+    "Quarterly identity-control audit for compliance reporting.",
+    ["Reviewing only OPEN accounts and missing expired/locked risk indicators.", "Not reconciling external/global auth accounts."],
+    "USERNAME AUTHENTICATION_TYPE PROFILE        ACCOUNT_STATUS\nAPP_USER PASSWORD            SECURE_PROFILE OPEN"
+  ),
+  createCommand(
+    "dg-09",
+    "Data Guard",
+    "Intermediate",
+    "SELECT thread#, sequence#, applied FROM v$archived_log ORDER BY sequence# DESC FETCH FIRST 20 ROWS ONLY;",
+    "Checks archival sequence progression and apply state on standby.",
+    "Validate no apply gap after network disturbance.",
+    ["Reading primary output as standby apply status.", "Ignoring thread differences in RAC."],
+    "THREAD# SEQUENCE# APPLIED\n1       14514     YES"
+  ),
+  createCommand(
+    "dg-10",
+    "Data Guard",
+    "Advanced",
+    "DGMGRL> SHOW CONFIGURATION;",
+    "Displays broker configuration health and role assignments.",
+    "Fast DR health check before planned role transition.",
+    ["Running broker commands when broker is disabled.", "Ignoring warning state details before switchover."],
+    "Configuration - ORCL_DG\nProtection Mode: MaxPerformance\nMembers: ORCL - Primary database"
+  ),
+  createCommand(
+    "dg-11",
+    "Data Guard",
+    "Advanced",
+    "SELECT protection_mode, protection_level, guard_status FROM v$database;",
+    "Verifies protection guarantees currently enforced in Data Guard.",
+    "Confirm DR policy alignment after maintenance changes.",
+    ["Confusing protection_mode with actual protection_level during transport issues.", "Skipping validation after destination failures."],
+    "PROTECTION_MODE   PROTECTION_LEVEL  GUARD_STATUS\nMAXIMUM PERFORMANCE MAXIMUM PERFORMANCE NONE"
+  ),
+  createCommand(
+    "pdb-09",
+    "Multitenant CDB/PDB",
+    "Beginner",
+    "SHOW PDBS;",
+    "Shows pluggable database list and open mode in SQL*Plus style output.",
+    "Quick visual check after CDB restart.",
+    ["Assuming SHOW PDBS is valid in all SQL clients.", "Not checking restricted mode flags."],
+    "CON_ID CON_NAME OPEN MODE RESTRICTED\n3      PDB1     READ WRITE NO"
+  ),
+  createCommand(
+    "pdb-10",
+    "Multitenant CDB/PDB",
+    "Intermediate",
+    "ALTER PLUGGABLE DATABASE ALL SAVE STATE;",
+    "Persists open state for every PDB to auto-open on future restarts.",
+    "Standardize startup behavior across environments.",
+    ["Saving state while PDBs are intentionally closed for maintenance.", "Not validating state after restart."],
+    "Pluggable database altered."
+  ),
+  createCommand(
+    "pdb-11",
+    "Multitenant CDB/PDB",
+    "Advanced",
+    "SELECT con_id, username, account_status FROM cdb_users WHERE username='APP_USER' ORDER BY con_id;",
+    "Checks user presence and status across all containers.",
+    "Verify tenant-wide account provisioning consistency.",
+    ["Running from PDB and expecting CDB-wide visibility.", "Not filtering common vs local users correctly."],
+    "CON_ID USERNAME ACCOUNT_STATUS\n3      APP_USER OPEN"
+  )
+];
+
 /** @type {import('./contracts.js').CommandEntry[]} */
 export const COMMAND_ENTRIES = [
   ...USER_MANAGEMENT,
@@ -1067,7 +1440,8 @@ export const COMMAND_ENTRIES = [
   ...STARTUP_MAINTENANCE,
   ...SECURITY_AUDITING,
   ...DATA_GUARD_COMMANDS,
-  ...MULTITENANT_COMMANDS
+  ...MULTITENANT_COMMANDS,
+  ...COMMAND_EXPANSION
 ];
 
 export const COMMAND_CATEGORIES = [
