@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Data Flow | Oracle Learn</title>
+    <meta name="description" content="Detailed animated Oracle data flow model covering query, DML, TCL, and DDL operation paths." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-dataflow">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Working Model</p>
+          <h1>Oracle Data Flow Animation (Detailed)</h1>
+          <p class="lead">
+            Flow paths are mapped to Oracle SQL processing and transaction behavior: parse, optimize, buffer/undo/redo,
+            LGWR/DBWn actions, and final user visibility.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="toggle-row" role="group" aria-label="Choose operation">
+            <button class="chip is-active" data-operation="SELECT">SELECT</button>
+            <button class="chip" data-operation="INSERT">INSERT</button>
+            <button class="chip" data-operation="UPDATE">UPDATE</button>
+            <button class="chip" data-operation="DELETE">DELETE</button>
+            <button class="chip" data-operation="MERGE">MERGE</button>
+            <button class="chip" data-operation="COMMIT">COMMIT</button>
+            <button class="chip" data-operation="ROLLBACK">ROLLBACK</button>
+            <button class="chip" data-operation="DDL">DDL</button>
+          </div>
+
+          <div class="flow-lanes card">
+            <div class="flow-lane"><strong>Lane 1</strong><span>Parse and Plan</span></div>
+            <div class="flow-lane"><strong>Lane 2</strong><span>Execute and Change</span></div>
+            <div class="flow-lane"><strong>Lane 3</strong><span>Durability and Visibility</span></div>
+          </div>
+
+          <div class="flow-stage card">
+            <div id="flow-nodes" class="flow-nodes flow-nodes-grid" aria-label="Oracle data flow stages">
+              <div class="flow-node" data-stage="client_request">Client Request</div>
+              <div class="flow-node" data-stage="parse_check">Parse & Semantic Check</div>
+              <div class="flow-node" data-stage="optimize_cursor">Optimize & Cursor Build</div>
+              <div class="flow-node" data-stage="shared_pool">Shared Pool Lookup</div>
+              <div class="flow-node" data-stage="buffer_cache">Buffer Cache Access</div>
+              <div class="flow-node" data-stage="undo_segment">Undo Generation</div>
+              <div class="flow-node" data-stage="redo_buffer">Redo Buffer</div>
+              <div class="flow-node" data-stage="lgwr_flush">LGWR Flush</div>
+              <div class="flow-node" data-stage="dbwr_write">DBWn Checkpoint Write</div>
+              <div class="flow-node" data-stage="datafile_io">Datafile I/O</div>
+              <div class="flow-node" data-stage="archiver">Archive Processing</div>
+              <div class="flow-node" data-stage="result_return">Result / Visibility</div>
+            </div>
+            <div class="flow-controls">
+              <button id="flow-prev" class="btn btn-secondary" type="button">Previous Step</button>
+              <button id="flow-next" class="btn btn-primary" type="button">Next Step</button>
+              <button id="flow-replay" class="btn btn-terminal" type="button">Replay</button>
+            </div>
+          </div>
+
+          <article class="card flow-explain" aria-live="polite">
+            <p class="eyebrow" id="flow-operation-label">Operation: SELECT</p>
+            <p class="eyebrow" id="flow-step-counter">Step 1 of 1</p>
+            <h2 id="flow-step-title">Step details</h2>
+            <div class="flow-progress-wrap" aria-label="Flow progress">
+              <div id="flow-progress" class="flow-progress"></div>
+            </div>
+            <p id="flow-step-explanation">Choose an operation to see synchronized stage-by-stage flow.</p>
+            <pre id="flow-command-hint" class="code-block">SELECT * FROM employees WHERE department_id = 10;</pre>
+            <p><strong>DBA Watchpoint:</strong> <span id="flow-watchpoint">Watchpoint details appear here.</span></p>
+            <p><strong>Risk if Ignored:</strong> <span id="flow-risk">Risk details appear here.</span></p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card">
+            <h2>Official Oracle References for This Flow Model</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">SQL Processing</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Transactions and Commit/Rollback Behavior</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Process Architecture (LGWR/DBWn/ARCn)</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/dataflow.js"></script>
+  </body>
+</html>

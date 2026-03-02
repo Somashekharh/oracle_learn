@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Security & Hardening | Oracle Learn</title>
+    <meta name="description" content="Oracle database security hardening guide with privileges, roles, auditing, and SQL injection prevention." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-security">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Cybersecurity + DBA</p>
+          <h1>Oracle Security & Hardening</h1>
+          <p class="lead">Build secure-by-default Oracle environments with least privilege, auditing, and hardening controls.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container card-grid two-col">
+          <article class="card">
+            <h2>User Privileges and Roles</h2>
+            <p>Apply least privilege with role-based grants and periodic entitlement reviews.</p>
+            <pre class="code-block">CREATE ROLE app_readonly;
+GRANT CREATE SESSION TO app_readonly;
+GRANT SELECT ON hr.employees TO app_readonly;
+GRANT app_readonly TO analyst_user;</pre>
+          </article>
+
+          <article class="card">
+            <h2>Auditing Basics</h2>
+            <p>Track sensitive activity and policy violations with unified auditing in Oracle.</p>
+            <pre class="code-block">CREATE AUDIT POLICY dba_changes
+ACTIONS ALTER USER, DROP USER, GRANT;
+AUDIT POLICY dba_changes;</pre>
+          </article>
+
+          <article class="card">
+            <h2>SQL Injection Prevention</h2>
+            <p>Use bind variables, input validation, and controlled privilege boundaries in application schemas.</p>
+            <pre class="code-block">SELECT * FROM accounts WHERE user_id = :id;
+-- Avoid concatenated dynamic SQL with user input</pre>
+          </article>
+
+          <article class="card">
+            <h2>Database Hardening Checklist</h2>
+            <ul class="checklist">
+              <li>Disable unused accounts and lock default users.</li>
+              <li>Enforce strong password profiles and rotation windows.</li>
+              <li>Encrypt sensitive data at rest (TDE) and in transit (TLS).</li>
+              <li>Review PUBLIC grants and revoke unnecessary access.</li>
+              <li>Enable auditing for privileged operations and schema changes.</li>
+              <li>Patch database and OPatch inventory regularly.</li>
+              <li>Restrict network ACLs and listener access.</li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+  </body>
+</html>

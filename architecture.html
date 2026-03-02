@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Architecture | Oracle Learn</title>
+    <meta
+      name="description"
+      content="Comprehensive animated Oracle architecture map with instance memory, process architecture, storage, and guided flow walkthroughs."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-architecture">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Main Learning Section</p>
+          <h1>Oracle Database Architecture (Complete + Animated)</h1>
+          <p class="lead">
+            This section models Oracle client connectivity, listener registration, instance memory, background processes,
+            and physical storage with guided flow modes for query, commit, checkpoint, and recovery.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container architecture-layout">
+          <div id="diagram-stage" class="diagram-stage" aria-label="Oracle architecture diagram stage">
+            <div class="diagram-controls">
+              <button class="chip" id="diagram-expand" type="button" aria-pressed="false">Expand</button>
+              <button class="chip" id="diagram-zoom-in" type="button">Zoom +</button>
+              <button class="chip" id="diagram-zoom-out" type="button">Zoom -</button>
+              <button class="chip" id="diagram-reset" type="button">Reset View</button>
+            </div>
+
+            <div class="flow-mode-grid card" aria-label="Architecture flow modes">
+              <div class="filter-row" role="group" aria-label="Choose architecture flow mode">
+                <button class="chip is-active" data-arch-flow="all">All Layers</button>
+                <button class="chip" data-arch-flow="query">Query Path</button>
+                <button class="chip" data-arch-flow="dml">DML + Commit</button>
+                <button class="chip" data-arch-flow="checkpoint">Checkpoint</button>
+                <button class="chip" data-arch-flow="recovery">Recovery</button>
+                <button class="chip" data-arch-flow="shared">Shared Server</button>
+              </div>
+              <div class="filter-row" role="group" aria-label="Flow walkthrough controls">
+                <button class="btn btn-primary" id="arch-flow-walk" type="button">Walk Selected Flow</button>
+                <button class="btn btn-secondary" id="arch-flow-stop" type="button">Stop Walkthrough</button>
+              </div>
+              <p class="flow-desc" id="arch-flow-desc">
+                All layers visible. Choose a flow mode to focus on one Oracle execution path.
+              </p>
+            </div>
+
+            <div class="diagram-legend card">
+              <span class="legend-item"><span class="legend-dot client"></span>Client and Network</span>
+              <span class="legend-item"><span class="legend-dot memory"></span>SGA and PGA</span>
+              <span class="legend-item"><span class="legend-dot process"></span>Background Processes</span>
+              <span class="legend-item"><span class="legend-dot storage"></span>Physical Storage</span>
+            </div>
+
+            <div id="diagram-canvas" class="diagram-canvas" tabindex="0" aria-label="Oracle architecture interactive map">
+              <svg
+                viewBox="0 0 1650 1060"
+                role="img"
+                aria-labelledby="diagramTitle diagramDesc"
+                xmlns:xlink="http://www.w3.org/1999/xlink"
+              >
+                <title id="diagramTitle">Oracle Database Architecture</title>
+                <desc id="diagramDesc">
+                  End-to-end architecture including listener, dedicated/shared server, SGA components, background processes,
+                  and storage structures.
+                </desc>
+
+                <defs>
+                  <marker id="diagramArrowHead" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" class="diagram-arrow-head"></path>
+                  </marker>
+                </defs>
+
+                <rect x="14" y="18" width="1620" height="1024" rx="20" class="diagram-instance" data-node="instance" data-flow-members="all" tabindex="0"></rect>
+                <text x="40" y="54" class="diagram-label-main">Oracle Architecture: Network, Instance, Processes, and Storage</text>
+
+                <rect x="40" y="82" width="410" height="300" rx="16" class="diagram-panel"></rect>
+                <text x="62" y="112" class="diagram-label-main">Client and Network Layer</text>
+                <rect x="66" y="142" width="170" height="60" rx="10" class="diagram-node client" data-node="client_process" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="100" y="178" class="diagram-label">Client Process</text>
+
+                <rect x="256" y="142" width="170" height="60" rx="10" class="diagram-node client" data-node="listener" data-flow-members="query,dml,shared,recovery" tabindex="0"></rect>
+                <text x="305" y="178" class="diagram-label">Listener</text>
+
+                <rect x="66" y="222" width="170" height="58" rx="10" class="diagram-node client" data-node="dedicated_server" data-flow-members="query,dml" tabindex="0"></rect>
+                <text x="82" y="256" class="diagram-label">Dedicated Server</text>
+
+                <rect x="256" y="222" width="170" height="58" rx="10" class="diagram-node client" data-node="dispatcher" data-flow-members="shared" tabindex="0"></rect>
+                <text x="302" y="256" class="diagram-label">Dispatcher</text>
+
+                <rect x="158" y="300" width="170" height="58" rx="10" class="diagram-node client" data-node="shared_server" data-flow-members="shared" tabindex="0"></rect>
+                <text x="196" y="334" class="diagram-label">Shared Server</text>
+
+                <rect x="480" y="82" width="670" height="470" rx="16" class="diagram-panel"></rect>
+                <text x="504" y="112" class="diagram-label-main">Instance Memory Architecture</text>
+
+                <rect x="504" y="132" width="622" height="388" rx="12" class="diagram-node memory" data-node="sga" data-flow-members="all" tabindex="0"></rect>
+                <text x="530" y="166" class="diagram-label">SGA</text>
+
+                <rect x="526" y="182" width="180" height="62" rx="10" class="diagram-node memory" data-node="shared_pool" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="565" y="218" class="diagram-label">Shared Pool</text>
+
+                <rect x="724" y="182" width="192" height="62" rx="10" class="diagram-node memory" data-node="buffer_cache" data-flow-members="query,dml,checkpoint,shared,recovery" tabindex="0"></rect>
+                <text x="758" y="218" class="diagram-label">Buffer Cache</text>
+
+                <rect x="938" y="182" width="168" height="62" rx="10" class="diagram-node memory" data-node="redo_buffer" data-flow-members="dml,checkpoint,recovery,shared" tabindex="0"></rect>
+                <text x="966" y="218" class="diagram-label">Redo Buffer</text>
+
+                <rect x="526" y="262" width="176" height="58" rx="10" class="diagram-node memory" data-node="library_cache" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="553" y="296" class="diagram-label">Library Cache</text>
+
+                <rect x="720" y="262" width="206" height="58" rx="10" class="diagram-node memory" data-node="dictionary_cache" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="742" y="296" class="diagram-label">Dictionary Cache</text>
+
+                <rect x="944" y="262" width="162" height="58" rx="10" class="diagram-node memory" data-node="result_cache" data-flow-members="query" tabindex="0"></rect>
+                <text x="969" y="296" class="diagram-label">Result Cache</text>
+
+                <rect x="526" y="336" width="176" height="58" rx="10" class="diagram-node memory" data-node="large_pool" data-flow-members="shared" tabindex="0"></rect>
+                <text x="560" y="370" class="diagram-label">Large Pool</text>
+
+                <rect x="720" y="336" width="176" height="58" rx="10" class="diagram-node memory" data-node="java_pool" data-flow-members="query,dml" tabindex="0"></rect>
+                <text x="760" y="370" class="diagram-label">Java Pool</text>
+
+                <rect x="914" y="336" width="192" height="58" rx="10" class="diagram-node memory" data-node="streams_pool" data-flow-members="recovery" tabindex="0"></rect>
+                <text x="944" y="370" class="diagram-label">Streams Pool</text>
+
+                <rect x="526" y="410" width="176" height="58" rx="10" class="diagram-node memory" data-node="fixed_sga" data-flow-members="all" tabindex="0"></rect>
+                <text x="566" y="444" class="diagram-label">Fixed SGA</text>
+
+                <rect x="720" y="410" width="220" height="58" rx="10" class="diagram-node memory" data-node="pga" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="807" y="444" class="diagram-label">PGA</text>
+
+                <rect x="1178" y="82" width="444" height="470" rx="16" class="diagram-panel"></rect>
+                <text x="1200" y="112" class="diagram-label-main">Background Process Architecture</text>
+
+                <rect x="1202" y="142" width="126" height="58" rx="10" class="diagram-node process" data-node="dbwn" data-flow-members="dml,checkpoint,shared" tabindex="0"></rect>
+                <text x="1237" y="176" class="diagram-label">DBWn</text>
+
+                <rect x="1340" y="142" width="126" height="58" rx="10" class="diagram-node process" data-node="lgwr" data-flow-members="dml,checkpoint,recovery,shared" tabindex="0"></rect>
+                <text x="1378" y="176" class="diagram-label">LGWR</text>
+
+                <rect x="1478" y="142" width="126" height="58" rx="10" class="diagram-node process" data-node="ckpt" data-flow-members="checkpoint,recovery" tabindex="0"></rect>
+                <text x="1517" y="176" class="diagram-label">CKPT</text>
+
+                <rect x="1202" y="222" width="126" height="58" rx="10" class="diagram-node process" data-node="smon" data-flow-members="recovery" tabindex="0"></rect>
+                <text x="1240" y="256" class="diagram-label">SMON</text>
+
+                <rect x="1340" y="222" width="126" height="58" rx="10" class="diagram-node process" data-node="pmon" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="1378" y="256" class="diagram-label">PMON</text>
+
+                <rect x="1478" y="222" width="126" height="58" rx="10" class="diagram-node process" data-node="arcn" data-flow-members="recovery" tabindex="0"></rect>
+                <text x="1517" y="256" class="diagram-label">ARCn</text>
+
+                <rect x="1202" y="302" width="126" height="58" rx="10" class="diagram-node process" data-node="reco" data-flow-members="recovery" tabindex="0"></rect>
+                <text x="1240" y="336" class="diagram-label">RECO</text>
+
+                <rect x="1340" y="302" width="126" height="58" rx="10" class="diagram-node process" data-node="mmon" data-flow-members="all" tabindex="0"></rect>
+                <text x="1377" y="336" class="diagram-label">MMON</text>
+
+                <rect x="1478" y="302" width="126" height="58" rx="10" class="diagram-node process" data-node="lreg" data-flow-members="query,dml,shared" tabindex="0"></rect>
+                <text x="1518" y="336" class="diagram-label">LREG</text>
+
+                <rect x="40" y="578" width="1582" height="448" rx="16" class="diagram-flow"></rect>
+                <text x="62" y="612" class="diagram-label-main">Physical Storage and Recovery Structures</text>
+
+                <rect x="90" y="650" width="290" height="68" rx="10" class="diagram-node storage" data-node="control_files" data-flow-members="checkpoint,recovery" tabindex="0"></rect>
+                <text x="176" y="690" class="diagram-label">Control Files</text>
+
+                <rect x="420" y="650" width="290" height="68" rx="10" class="diagram-node storage" data-node="datafiles" data-flow-members="query,dml,checkpoint,shared,recovery" tabindex="0"></rect>
+                <text x="515" y="690" class="diagram-label">Datafiles</text>
+
+                <rect x="750" y="650" width="290" height="68" rx="10" class="diagram-node storage" data-node="online_redo" data-flow-members="dml,checkpoint,recovery,shared" tabindex="0"></rect>
+                <text x="820" y="690" class="diagram-label">Online Redo Logs</text>
+
+                <rect x="1080" y="650" width="420" height="68" rx="10" class="diagram-node storage" data-node="archived_redo" data-flow-members="recovery" tabindex="0"></rect>
+                <text x="1210" y="690" class="diagram-label">Archived Redo Logs</text>
+
+                <rect x="240" y="760" width="360" height="68" rx="10" class="diagram-node storage" data-node="undo_tablespace" data-flow-members="dml,recovery" tabindex="0"></rect>
+                <text x="336" y="800" class="diagram-label">Undo Tablespace</text>
+
+                <rect x="640" y="760" width="320" height="68" rx="10" class="diagram-node storage" data-node="tempfiles" data-flow-members="query,shared" tabindex="0"></rect>
+                <text x="737" y="800" class="diagram-label">Tempfiles</text>
+
+                <rect x="1000" y="760" width="410" height="68" rx="10" class="diagram-node storage" data-node="spfile_pwfile" data-flow-members="all" tabindex="0"></rect>
+                <text x="1128" y="800" class="diagram-label">SPFILE and Password File</text>
+
+                <path id="flow-client-listener" class="diagram-flow-line sql-path" data-flows="query,dml,shared" d="M236 172 C246 172 248 172 256 172" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-listener-dedicated" class="diagram-flow-line sql-path" data-flows="query,dml" d="M340 202 C310 212 240 228 236 250" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-listener-dispatcher" class="diagram-flow-line shared-path" data-flows="shared" d="M340 202 C350 212 356 220 356 222" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-dispatcher-sharedsrv" class="diagram-flow-line shared-path" data-flows="shared" d="M312 280 C288 295 268 302 244 302" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-dedicated-sharedpool" class="diagram-flow-line sql-path" data-flows="query,dml" d="M236 250 C360 238 430 216 526 214" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-sharedsrv-sharedpool" class="diagram-flow-line shared-path" data-flows="shared" d="M328 330 C400 292 470 250 526 214" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-sharedpool-library" class="diagram-flow-line sql-path" data-flows="query,dml,shared" d="M616 244 C616 252 616 256 614 262" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-sharedpool-dictionary" class="diagram-flow-line sql-path" data-flows="query,dml,shared" d="M706 214 C724 242 760 252 780 262" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-server-buffercache" class="diagram-flow-line sql-path" data-flows="query,dml" d="M236 250 C390 250 560 214 724 214" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-sharedserver-buffercache" class="diagram-flow-line shared-path" data-flows="shared" d="M328 330 C448 300 586 264 724 214" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-server-redobuffer" class="diagram-flow-line redo-path" data-flows="dml,shared" d="M236 250 C470 250 760 220 938 214" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-redo-lgwr" class="diagram-flow-line redo-path" data-flows="dml,checkpoint,recovery,shared" d="M1106 214 C1180 214 1265 186 1340 172" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-lgwr-onlineredo" class="diagram-flow-line redo-path" data-flows="dml,checkpoint,recovery,shared" d="M1402 200 C1275 360 1090 542 895 650" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-onlineredo-arcn" class="diagram-flow-line arcn-path" data-flows="recovery" d="M1040 684 C1250 670 1410 400 1478 250" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-arcn-archived" class="diagram-flow-line arcn-path" data-flows="recovery" d="M1540 280 C1555 420 1440 560 1320 650" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-buffer-dbwn" class="diagram-flow-line dbwn-path" data-flows="dml,checkpoint,shared" d="M916 214 C1015 206 1110 188 1202 172" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-dbwn-datafiles" class="diagram-flow-line dbwn-path" data-flows="dml,checkpoint,shared" d="M1265 200 C1110 360 900 556 565 650" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-ckpt-control" class="diagram-flow-line ckpt-path" data-flows="checkpoint,recovery" d="M1541 172 C1280 320 900 510 236 650" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-ckpt-datafiles" class="diagram-flow-line ckpt-path" data-flows="checkpoint,recovery" d="M1541 172 C1230 370 940 550 565 650" marker-end="url(#diagramArrowHead)"></path>
+
+                <path id="flow-buffer-undo" class="diagram-flow-line undo-path" data-flows="dml,recovery" d="M820 244 C730 430 620 590 420 760" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-buffer-temp" class="diagram-flow-line sql-path" data-flows="query,shared" d="M820 244 C830 420 805 590 800 760" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-smon-undo" class="diagram-flow-line recovery-path" data-flows="recovery" d="M1265 250 C980 450 760 640 420 760" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-reco-redo" class="diagram-flow-line recovery-path" data-flows="recovery" d="M1265 330 C1180 430 1070 550 895 650" marker-end="url(#diagramArrowHead)"></path>
+                <path id="flow-lreg-listener" class="diagram-flow-line shared-path" data-flows="query,dml,shared" d="M1540 332 C1370 220 860 160 426 172" marker-end="url(#diagramArrowHead)"></path>
+
+                <circle r="5" class="flow-particle sql-particle" data-flows="query">
+                  <animateMotion dur="4.5s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#flow-client-listener" xlink:href="#flow-client-listener"></mpath>
+                  </animateMotion>
+                </circle>
+                <circle r="5" class="flow-particle sql-particle" data-flows="query">
+                  <animateMotion dur="5s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#flow-server-buffercache" xlink:href="#flow-server-buffercache"></mpath>
+                  </animateMotion>
+                </circle>
+
+                <circle r="5" class="flow-particle redo-particle" data-flows="dml">
+                  <animateMotion dur="5.5s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#flow-redo-lgwr" xlink:href="#flow-redo-lgwr"></mpath>
+                  </animateMotion>
+                </circle>
+                <circle r="5" class="flow-particle redo-particle" data-flows="dml">
+                  <animateMotion dur="6s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#flow-lgwr-onlineredo" xlink:href="#flow-lgwr-onlineredo"></mpath>
+                  </animateMotion>
+                </circle>
+
+                <circle r="5" class="flow-particle arcn-particle" data-flows="recovery">
+                  <animateMotion dur="6.4s" repeatCount="indefinite" rotate="auto">
+                    <mpath href="#flow-arcn-archived" xlink:href="#flow-arcn-archived"></mpath>
+                  </animateMotion>
+                </circle>
+              </svg>
+            </div>
+          </div>
+
+          <aside class="card info-panel" aria-live="polite">
+            <h2 id="node-title">Select a Component</h2>
+            <div class="info-block"><h3>What is it?</h3><p id="node-description">Hover or focus on a node to inspect details.</p></div>
+            <div class="info-block"><h3>Why important?</h3><p id="node-importance">Importance detail will appear here.</p></div>
+            <div class="info-block"><h3>What happens if it fails?</h3><p id="node-failure">Failure impact will appear here.</p></div>
+            <div class="info-block"><h3>Real-time command</h3><pre id="node-command" class="code-block">SELECT instance_name, status FROM v$instance;</pre></div>
+            <div class="info-block"><h3>Example output</h3><pre id="node-output" class="code-block">INSTANCE_NAME STATUS
+------------- ------
+ORCL          OPEN</pre></div>
+            <div class="info-block"><h3>Practical DBA scenario</h3><p id="node-scenario">Scenario details will appear here.</p></div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container card-grid two-col">
+          <article class="card">
+            <h2>Official Oracle References</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Process Architecture</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/memory-architecture.html" target="_blank" rel="noreferrer">Memory Architecture</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/physical-storage-structures.html" target="_blank" rel="noreferrer">Physical Storage Structures</a></li>
+            </ul>
+          </article>
+          <article class="card">
+            <h2>Flow Reference Docs</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">SQL Processing Pipeline</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Transactions and Commit Behavior</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/bradv/index.html" target="_blank" rel="noreferrer">Backup and Recovery Guide</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/architecture.js"></script>
+  </body>
+</html>

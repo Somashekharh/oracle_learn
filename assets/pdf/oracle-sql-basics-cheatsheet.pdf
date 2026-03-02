@@ -1,0 +1,165 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1936 >>
+stream
+q
+0.93 g
+BT
+/F1 52 Tf
+0.707 0.707 -0.707 0.707 140 330 Tm
+(Oracle Learn Platform) Tj
+ET
+Q
+BT
+/F1 17 Tf
+48 800 Td
+(Oracle SQL and Transaction Notes) Tj
+ET
+BT
+/F1 10 Tf
+48 782 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 767 Td
+(Core Querying) Tj
+ET
+BT
+/F1 10 Tf
+48 749 Td
+( - Use selective WHERE predicates and indexed join keys to reduce full scans.) Tj
+ET
+BT
+/F1 10 Tf
+48 734 Td
+( - Always compare execution plan and row-count expectation before production deployment.) Tj
+ET
+BT
+/F1 10 Tf
+48 719 Td
+( - Use bind variables for both security and parse efficiency.) Tj
+ET
+BT
+/F1 10 Tf
+48 704 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 689 Td
+(DML + TCL Behavior) Tj
+ET
+BT
+/F1 10 Tf
+48 671 Td
+( - INSERT UPDATE DELETE modify blocks in memory first and generate redo and undo.) Tj
+ET
+BT
+/F1 10 Tf
+48 656 Td
+( - COMMIT waits for LGWR flush and makes transactions durable.) Tj
+ET
+BT
+/F1 10 Tf
+48 641 Td
+( - ROLLBACK uses undo records and itself generates redo for consistency.) Tj
+ET
+BT
+/F1 10 Tf
+48 626 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 611 Td
+(Interview Quick Commands) Tj
+ET
+BT
+/F1 10 Tf
+48 593 Td
+( - SELECT name, open_mode, log_mode FROM v$database;) Tj
+ET
+BT
+/F1 10 Tf
+48 578 Td
+( - SELECT sql_id, executions, elapsed_time/1000000 FROM v$sqlstats ORDER BY elapsed_time DESC) Tj
+ET
+BT
+/F1 10 Tf
+48 563 Td
+(   FETCH FIRST 10 ROWS ONLY;) Tj
+ET
+BT
+/F1 10 Tf
+48 548 Td
+( - SELECT sid, serial#, blocking_session, event FROM v$session WHERE blocking_session IS NOT) Tj
+ET
+BT
+/F1 10 Tf
+48 533 Td
+(   NULL;) Tj
+ET
+BT
+/F1 10 Tf
+48 518 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 503 Td
+(Common Mistakes) Tj
+ET
+BT
+/F1 10 Tf
+48 485 Td
+( - Running wide updates or deletes without predicate validation.) Tj
+ET
+BT
+/F1 10 Tf
+48 470 Td
+( - Ignoring explain-plan regressions after stats changes.) Tj
+ET
+BT
+/F1 10 Tf
+48 455 Td
+( - Committing too frequently in high-throughput workloads.) Tj
+ET
+BT
+/F1 10 Tf
+48 440 Td
+() Tj
+ET
+BT
+/F1 9 Tf
+48 24 Td
+(Watermarked educational notes - Oracle Learn Platform) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000002234 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2304
+%%EOF

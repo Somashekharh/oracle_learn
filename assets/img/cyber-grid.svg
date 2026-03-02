@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" fill="none">
+  <rect width="1440" height="900" fill="#04060f"/>
+  <g stroke="#1f4f88" stroke-opacity="0.35">
+    <path d="M0 100h1440"/><path d="M0 200h1440"/><path d="M0 300h1440"/><path d="M0 400h1440"/><path d="M0 500h1440"/><path d="M0 600h1440"/><path d="M0 700h1440"/><path d="M0 800h1440"/>
+    <path d="M120 0v900"/><path d="M240 0v900"/><path d="M360 0v900"/><path d="M480 0v900"/><path d="M600 0v900"/><path d="M720 0v900"/><path d="M840 0v900"/><path d="M960 0v900"/><path d="M1080 0v900"/><path d="M1200 0v900"/><path d="M1320 0v900"/>
+  </g>
+</svg>

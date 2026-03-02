@@ -1,0 +1,170 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 1864 >>
+stream
+q
+0.93 g
+BT
+/F1 52 Tf
+0.707 0.707 -0.707 0.707 140 330 Tm
+(Oracle Learn Platform) Tj
+ET
+Q
+BT
+/F1 17 Tf
+48 800 Td
+(Oracle Backup Recovery and Linux DBA Notes) Tj
+ET
+BT
+/F1 10 Tf
+48 782 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 767 Td
+(RMAN Essentials) Tj
+ET
+BT
+/F1 10 Tf
+48 749 Td
+( - Configure retention policy and verify backup cadence with list backup summary.) Tj
+ET
+BT
+/F1 10 Tf
+48 734 Td
+( - Validate recoverability regularly with RESTORE DATABASE VALIDATE.) Tj
+ET
+BT
+/F1 10 Tf
+48 719 Td
+( - Use CROSSCHECK and DELETE OBSOLETE to keep catalog and storage clean.) Tj
+ET
+BT
+/F1 10 Tf
+48 704 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 689 Td
+(Recovery Flow) Tj
+ET
+BT
+/F1 10 Tf
+48 671 Td
+( - Media recovery requires consistent chain of backups plus archived redo.) Tj
+ET
+BT
+/F1 10 Tf
+48 656 Td
+( - In incidents perform restore preview before full restore if time allows.) Tj
+ET
+BT
+/F1 10 Tf
+48 641 Td
+( - Document RTO and RPO outcome after each drill.) Tj
+ET
+BT
+/F1 10 Tf
+48 626 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 611 Td
+(Linux Commands for DBA) Tj
+ET
+BT
+/F1 10 Tf
+48 593 Td
+( - ps -ef | grep pmon) Tj
+ET
+BT
+/F1 10 Tf
+48 578 Td
+( - lsnrctl status) Tj
+ET
+BT
+/F1 10 Tf
+48 563 Td
+( - iostat -xm 1 5) Tj
+ET
+BT
+/F1 10 Tf
+48 548 Td
+( - vmstat 1 5) Tj
+ET
+BT
+/F1 10 Tf
+48 533 Td
+( - tail -200f $ORACLE_BASE/diag/rdbms/orcl/ORCL/trace/alert_ORCL.log) Tj
+ET
+BT
+/F1 10 Tf
+48 518 Td
+( - ss -ltnp | grep 1521) Tj
+ET
+BT
+/F1 10 Tf
+48 503 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 488 Td
+(Operational Guardrails) Tj
+ET
+BT
+/F1 10 Tf
+48 470 Td
+( - Never assume backup job success means recovery success.) Tj
+ET
+BT
+/F1 10 Tf
+48 455 Td
+( - Track archive destination capacity proactively to avoid log-switch stalls.) Tj
+ET
+BT
+/F1 10 Tf
+48 440 Td
+( - Correlate DB wait events with host-level CPU and I/O metrics.) Tj
+ET
+BT
+/F1 10 Tf
+48 425 Td
+() Tj
+ET
+BT
+/F1 9 Tf
+48 24 Td
+(Watermarked educational notes - Oracle Learn Platform) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000002162 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2232
+%%EOF

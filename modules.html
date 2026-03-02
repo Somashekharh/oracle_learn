@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Modules | Oracle Learn</title>
+    <meta name="description" content="Beginner to advanced Oracle Database modules for students and aspiring DBAs." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-modules">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Structured Learning</p>
+          <h1>Oracle Learning Modules</h1>
+          <p class="lead">
+            Full beginner-to-advanced curriculum: fundamentals, architecture, installation, administration, performance,
+            recovery, and security-aligned DBA skills.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card command-toolbar">
+            <label class="sr-only" for="module-search">Search modules</label>
+            <input id="module-search" class="search-input" type="search" placeholder="Search module topics, concepts, or commands..." />
+
+            <div class="filter-row" role="group" aria-label="Filter lessons by module track">
+              <button class="chip is-active" data-module-filter="all">All Tracks</button>
+              <button class="chip" data-module-filter="Module 1">Fundamentals</button>
+              <button class="chip" data-module-filter="Module 2">Architecture</button>
+              <button class="chip" data-module-filter="Module 3">Installation</button>
+              <button class="chip" data-module-filter="Module 4">Administration</button>
+              <button class="chip" data-module-filter="Module 5">Performance & Backup</button>
+              <button class="chip" data-module-filter="Module 6">Advanced & Security</button>
+            </div>
+
+            <div class="filter-row" role="group" aria-label="Filter lessons by difficulty">
+              <button class="chip is-active" data-level-filter="all">All Levels</button>
+              <button class="chip" data-level-filter="Beginner">Beginner</button>
+              <button class="chip" data-level-filter="Intermediate">Intermediate</button>
+              <button class="chip" data-level-filter="Advanced">Advanced</button>
+            </div>
+
+            <p id="module-stats" class="eyebrow">Loading module stats...</p>
+          </article>
+
+          <div id="module-grid" class="card-grid two-col"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card">
+            <h2>Official Oracle References Used for This Curriculum</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Oracle Database Process Architecture</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/18/cncpt/memory-architecture.html#GUID-F41A44AE-26D0-4A95-820F-CD61C4C41A77" target="_blank" rel="noreferrer">Oracle Memory Architecture (SGA/PGA)</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/physical-storage-structures.html#GUID-74A064B5-1224-4755-A6EA-CF1AAD12EA61" target="_blank" rel="noreferrer">Oracle Physical Storage Structures</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">Oracle SQL Processing Pipeline</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Oracle Transaction Management</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/modules.js"></script>
+  </body>
+</html>

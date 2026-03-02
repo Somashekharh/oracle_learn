@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Labs, Flashcards, Quiz | Oracle Learn</title>
+    <meta name="description" content="Hands-on Oracle SQL labs, DBA scenario drills, flashcards, and interview quiz preparation." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-labs">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Practical Zone</p>
+          <h1>Practice Labs, Flashcards, and Quiz</h1>
+          <p class="lead">Train with real interview-style Oracle SQL and DBA tasks, then validate knowledge with flashcards and tests.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="tab-row" role="tablist" aria-label="Labs sections">
+            <button class="chip is-active" type="button" role="tab" aria-selected="true" data-tab="labs">Practice Labs</button>
+            <button class="chip" type="button" role="tab" aria-selected="false" data-tab="flashcards">Flashcards</button>
+            <button class="chip" type="button" role="tab" aria-selected="false" data-tab="quiz">Quiz</button>
+          </div>
+
+          <section class="tab-panel is-active" id="tab-labs" role="tabpanel">
+            <div class="command-toolbar card">
+              <label class="sr-only" for="lab-search">Search labs</label>
+              <input id="lab-search" class="search-input" type="search" placeholder="Search labs or interview topics..." />
+              <div class="filter-row" role="group" aria-label="Filter labs by type">
+                <button class="chip is-active" data-lab-type="all">All Types</button>
+                <button class="chip" data-lab-type="SQL Practice">SQL Practice</button>
+                <button class="chip" data-lab-type="DBA Scenario">DBA Scenario</button>
+                <button class="chip" data-lab-type="Mini Challenge">Mini Challenge</button>
+                <button class="chip" data-lab-type="Interview Q&A">Interview Q&A</button>
+              </div>
+            </div>
+            <div id="lab-grid" class="card-grid two-col"></div>
+          </section>
+
+          <section class="tab-panel" id="tab-flashcards" role="tabpanel" hidden>
+            <article class="card flashcard-wrap">
+              <p class="eyebrow" id="flashcard-meta">Topic</p>
+              <div id="flashcard" class="flashcard" tabindex="0" role="button" aria-label="Flip flashcard">
+                <div class="flashcard-inner">
+                  <div class="flashcard-face flashcard-front" id="flashcard-front">Front</div>
+                  <div class="flashcard-face flashcard-back" id="flashcard-back">Back</div>
+                </div>
+              </div>
+              <div class="flow-controls">
+                <button class="btn btn-secondary" id="flashcard-prev" type="button">Previous</button>
+                <button class="btn btn-terminal" id="flashcard-flip" type="button">Flip</button>
+                <button class="btn btn-primary" id="flashcard-next" type="button">Next</button>
+              </div>
+            </article>
+          </section>
+
+          <section class="tab-panel" id="tab-quiz" role="tabpanel" hidden>
+            <article class="card quiz-wrap" aria-live="polite">
+              <p class="eyebrow" id="quiz-progress">Question 1</p>
+              <h2 id="quiz-question">Loading question...</h2>
+              <div id="quiz-options" class="quiz-options"></div>
+              <p id="quiz-feedback" class="quiz-feedback"></p>
+              <div class="flow-controls">
+                <button class="btn btn-secondary" id="quiz-next" type="button">Next Question</button>
+                <button class="btn btn-terminal" id="quiz-reset" type="button">Reset Quiz</button>
+              </div>
+              <p id="quiz-score" class="quiz-score">Score: 0</p>
+            </article>
+          </section>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/labs.js"></script>
+    <script type="module" src="assets/js/features/quiz.js"></script>
+  </body>
+</html>

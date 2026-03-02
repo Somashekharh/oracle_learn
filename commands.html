@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DBA Command Center | Oracle Learn</title>
+    <meta name="description" content="Searchable Oracle DBA command center with syntax, scenarios, mistakes, and outputs." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-commands">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Interactive Terminal Section</p>
+          <h1>DBA Command Center</h1>
+          <p class="lead">
+            Explore Oracle SQL/RMAN/Data Pump commands plus Linux real-time operational commands used by DBAs in production.
+            Each entry includes practical scenario, mistakes, and expected output.
+          </p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="command-toolbar card">
+            <label for="command-search" class="sr-only">Search commands</label>
+            <input
+              id="command-search"
+              class="search-input"
+              type="search"
+              placeholder="Search commands, keywords, or scenarios..."
+              aria-label="Search DBA commands"
+            />
+            <div class="filter-row" role="group" aria-label="Filter by level">
+              <button class="chip is-active" data-command-level="all">All Levels</button>
+              <button class="chip" data-command-level="Beginner">Beginner</button>
+              <button class="chip" data-command-level="Intermediate">Intermediate</button>
+              <button class="chip" data-command-level="Advanced">Advanced</button>
+            </div>
+            <p id="command-count" class="eyebrow">Loading command catalog...</p>
+          </div>
+
+          <div id="category-filters" class="filter-row" role="group" aria-label="Filter by command category"></div>
+          <div id="command-results" class="command-grid"></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <article class="card">
+            <h2>Official References Behind Command Design</h2>
+            <ul>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Oracle Transactions and Recovery Concepts</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">Oracle SQL Processing</a></li>
+              <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Oracle Process Architecture</a></li>
+              <li><a href="https://docs.oracle.com/en/learn/ol-linux-command-line/" target="_blank" rel="noreferrer">Oracle Linux Command-Line Basics</a></li>
+            </ul>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/commands.js"></script>
+  </body>
+</html>

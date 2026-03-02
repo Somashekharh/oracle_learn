@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oracle Troubleshooting Blog | Oracle Learn</title>
+    <meta name="description" content="Static Oracle troubleshooting blog with searchable incident patterns and fixes." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/components.css" />
+    <link rel="stylesheet" href="assets/css/pages.css" />
+    <link rel="stylesheet" href="assets/css/animations.css" />
+  </head>
+  <body class="page-blog">
+    <div data-site-nav></div>
+    <main>
+      <section class="section page-hero">
+        <div class="container">
+          <p class="eyebrow">Troubleshooting Knowledge Base</p>
+          <h1>Oracle DBA Blog</h1>
+          <p class="lead">Search by error pattern, category, and practical fix path to learn production-minded troubleshooting.</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container blog-layout">
+          <aside class="card blog-sidebar">
+            <label class="sr-only" for="blog-search">Search blog</label>
+            <input id="blog-search" class="search-input" type="search" placeholder="Search title, tags, and summary..." />
+            <div id="blog-tags" class="filter-row" role="group" aria-label="Filter posts by tag"></div>
+            <div id="blog-list" class="blog-list"></div>
+          </aside>
+
+          <article class="card blog-detail" id="blog-detail" aria-live="polite">
+            <h2>Select a blog post</h2>
+            <p>Use search or click a post to read the detailed troubleshooting guide.</p>
+          </article>
+        </div>
+      </section>
+    </main>
+    <div data-site-footer></div>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module" src="assets/js/features/blog.js"></script>
+  </body>
+</html>

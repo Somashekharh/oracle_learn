@@ -1,0 +1,180 @@
+%PDF-1.4
+%‚„œ”
+1 0 obj
+<< /Type /Catalog /Pages 2 0 R >>
+endobj
+2 0 obj
+<< /Type /Pages /Kids [3 0 R] /Count 1 >>
+endobj
+3 0 obj
+<< /Type /Page /Parent 2 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 5 0 R >> >> /Contents 4 0 R >>
+endobj
+4 0 obj
+<< /Length 2186 >>
+stream
+q
+0.93 g
+BT
+/F1 52 Tf
+0.707 0.707 -0.707 0.707 140 330 Tm
+(Oracle Learn Platform) Tj
+ET
+Q
+BT
+/F1 17 Tf
+48 800 Td
+(Oracle Architecture Notes) Tj
+ET
+BT
+/F1 10 Tf
+48 782 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 767 Td
+(Instance Architecture) Tj
+ET
+BT
+/F1 10 Tf
+48 749 Td
+( - Instance equals SGA memory plus background processes.) Tj
+ET
+BT
+/F1 10 Tf
+48 734 Td
+( - Shared Pool handles parse and dictionary metadata; Buffer Cache handles data blocks; Redo) Tj
+ET
+BT
+/F1 10 Tf
+48 719 Td
+(   Buffer stores change vectors.) Tj
+ET
+BT
+/F1 10 Tf
+48 704 Td
+( - PGA is private process memory for sort hash and runtime state.) Tj
+ET
+BT
+/F1 10 Tf
+48 689 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 674 Td
+(Process Responsibilities) Tj
+ET
+BT
+/F1 10 Tf
+48 656 Td
+( - DBWn writes dirty buffers to datafiles.) Tj
+ET
+BT
+/F1 10 Tf
+48 641 Td
+( - LGWR flushes redo on commit boundaries.) Tj
+ET
+BT
+/F1 10 Tf
+48 626 Td
+( - CKPT updates control-file and datafile checkpoint metadata.) Tj
+ET
+BT
+/F1 10 Tf
+48 611 Td
+( - SMON and PMON handle recovery and process cleanup.) Tj
+ET
+BT
+/F1 10 Tf
+48 596 Td
+( - ARCn archives filled online redo logs.) Tj
+ET
+BT
+/F1 10 Tf
+48 581 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 566 Td
+(Storage Structures) Tj
+ET
+BT
+/F1 10 Tf
+48 548 Td
+( - Datafiles store persistent table and index blocks.) Tj
+ET
+BT
+/F1 10 Tf
+48 533 Td
+( - Control files store structural metadata and checkpoint history.) Tj
+ET
+BT
+/F1 10 Tf
+48 518 Td
+( - Online redo logs and archived redo logs provide crash and media recovery chain.) Tj
+ET
+BT
+/F1 10 Tf
+48 503 Td
+( - Undo and temporary segments support rollback read-consistency and sort/hash workloads.) Tj
+ET
+BT
+/F1 10 Tf
+48 488 Td
+() Tj
+ET
+BT
+/F1 12 Tf
+48 473 Td
+(Diagnostic Commands) Tj
+ET
+BT
+/F1 10 Tf
+48 455 Td
+( - SELECT instance_name, status, database_status FROM v$instance;) Tj
+ET
+BT
+/F1 10 Tf
+48 440 Td
+( - SELECT name, description FROM v$bgprocess WHERE paddr <> "00" ORDER BY name;) Tj
+ET
+BT
+/F1 10 Tf
+48 425 Td
+( - SELECT file#, name, status FROM v$datafile ORDER BY file#;) Tj
+ET
+BT
+/F1 10 Tf
+48 410 Td
+( - SELECT group#, status, archived FROM v$log ORDER BY group#;) Tj
+ET
+BT
+/F1 10 Tf
+48 395 Td
+() Tj
+ET
+BT
+/F1 9 Tf
+48 24 Td
+(Watermarked educational notes - Oracle Learn Platform) Tj
+ET
+endstream
+endobj
+5 0 obj
+<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>
+endobj
+xref
+0 6
+0000000000 65535 f 
+0000000015 00000 n 
+0000000064 00000 n 
+0000000121 00000 n 
+0000000247 00000 n 
+0000002484 00000 n 
+trailer
+<< /Size 6 /Root 1 0 R >>
+startxref
+2554
+%%EOF
