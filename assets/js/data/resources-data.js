@@ -196,7 +196,7 @@ export const RESOURCE_LINKS = [
   createResource(
     "res-19",
     "Oracle Linux Command Line Labs",
-    "https://docs.oracle.com/en/learn/ol-linux-command-line/",
+    "https://docs.oracle.com/en/operating-systems/oracle-linux/",
     "Linux Platform",
     "Beginner",
     "Hands-on command-line learning path for Linux fundamentals.",

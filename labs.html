@@ -30,32 +30,32 @@
       <section class="section">
         <div class="container">
           <div class="tab-row" role="tablist" aria-label="Labs sections">
-            <button class="chip is-active" type="button" role="tab" aria-selected="true" data-tab="labs">Practice Labs</button>
-            <button class="chip" type="button" role="tab" aria-selected="false" data-tab="flashcards">Flashcards</button>
-            <button class="chip" type="button" role="tab" aria-selected="false" data-tab="quiz">Quiz</button>
+            <button class="chip is-active" id="tab-btn-labs" type="button" role="tab" aria-selected="true" aria-controls="tab-labs" data-tab="labs">Practice Labs</button>
+            <button class="chip" id="tab-btn-flashcards" type="button" role="tab" aria-selected="false" aria-controls="tab-flashcards" data-tab="flashcards">Flashcards</button>
+            <button class="chip" id="tab-btn-quiz" type="button" role="tab" aria-selected="false" aria-controls="tab-quiz" data-tab="quiz">Quiz</button>
           </div>
 
-          <section class="tab-panel is-active" id="tab-labs" role="tabpanel">
+          <section class="tab-panel is-active" id="tab-labs" role="tabpanel" aria-labelledby="tab-btn-labs" tabindex="0">
             <div class="command-toolbar card">
               <label class="sr-only" for="lab-search">Search labs</label>
               <input id="lab-search" class="search-input" type="search" placeholder="Search labs or interview topics..." />
               <div class="filter-row" role="group" aria-label="Filter labs by type">
-                <button class="chip is-active" data-lab-type="all">All Types</button>
-                <button class="chip" data-lab-type="SQL Practice">SQL Practice</button>
-                <button class="chip" data-lab-type="DBA Scenario">DBA Scenario</button>
-                <button class="chip" data-lab-type="Mini Challenge">Mini Challenge</button>
-                <button class="chip" data-lab-type="Interview Q&A">Interview Q&A</button>
+                <button class="chip is-active" data-lab-type="all" type="button">All Types</button>
+                <button class="chip" data-lab-type="SQL Practice" type="button">SQL Practice</button>
+                <button class="chip" data-lab-type="DBA Scenario" type="button">DBA Scenario</button>
+                <button class="chip" data-lab-type="Mini Challenge" type="button">Mini Challenge</button>
+                <button class="chip" data-lab-type="Interview Q&A" type="button">Interview Q&A</button>
               </div>
               <div class="filter-row" role="group" aria-label="Filter labs by difficulty">
-                <button class="chip is-active" data-lab-level="all">All Levels</button>
-                <button class="chip" data-lab-level="Beginner">Beginner</button>
-                <button class="chip" data-lab-level="Intermediate">Intermediate</button>
-                <button class="chip" data-lab-level="Advanced">Advanced</button>
+                <button class="chip is-active" data-lab-level="all" type="button">All Levels</button>
+                <button class="chip" data-lab-level="Beginner" type="button">Beginner</button>
+                <button class="chip" data-lab-level="Intermediate" type="button">Intermediate</button>
+                <button class="chip" data-lab-level="Advanced" type="button">Advanced</button>
               </div>
               <div class="filter-row" role="group" aria-label="Filter labs by solved status">
-                <button class="chip is-active" data-lab-status="all">All Status</button>
-                <button class="chip" data-lab-status="pending">Pending</button>
-                <button class="chip" data-lab-status="solved">Solved</button>
+                <button class="chip is-active" data-lab-status="all" type="button">All Status</button>
+                <button class="chip" data-lab-status="pending" type="button">Pending</button>
+                <button class="chip" data-lab-status="solved" type="button">Solved</button>
               </div>
               <div class="lab-toolbar-actions">
                 <button id="lab-random" class="btn btn-terminal" type="button">Random Challenge</button>
@@ -69,7 +69,7 @@
             <div id="lab-grid" class="card-grid two-col"></div>
           </section>
 
-          <section class="tab-panel" id="tab-flashcards" role="tabpanel" hidden>
+          <section class="tab-panel" id="tab-flashcards" role="tabpanel" aria-labelledby="tab-btn-flashcards" tabindex="0" hidden>
             <article class="card flashcard-wrap">
               <p class="eyebrow" id="flashcard-meta">Topic</p>
               <div id="flashcard" class="flashcard" tabindex="0" role="button" aria-label="Flip flashcard">
@@ -86,7 +86,7 @@
             </article>
           </section>
 
-          <section class="tab-panel" id="tab-quiz" role="tabpanel" hidden>
+          <section class="tab-panel" id="tab-quiz" role="tabpanel" aria-labelledby="tab-btn-quiz" tabindex="0" hidden>
             <article class="card quiz-wrap" aria-live="polite">
               <p class="eyebrow" id="quiz-progress">Question 1</p>
               <h2 id="quiz-question">Loading question...</h2>
@@ -106,6 +106,7 @@
         <div class="container">
           <article class="card">
             <h2>Official References for Lab Practice</h2>
+            <p class="eyebrow">References last verified: March 3, 2026</p>
             <ul>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/sqlrf/" target="_blank" rel="noreferrer">Oracle SQL Language Reference</a></li>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/" target="_blank" rel="noreferrer">Oracle Database Administrator's Guide</a></li>

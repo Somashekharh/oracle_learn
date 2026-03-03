@@ -40,7 +40,7 @@ function renderCategoryFilters() {
       const isActive = category === activeCategory;
       const count = category === "all" ? COMMAND_ENTRIES.length : counts.get(category) || 0;
       const label = category === "all" ? `All Categories (${count})` : `${category} (${count})`;
-      return `<button class="chip ${isActive ? "is-active" : ""}" data-command-category="${category}">${label}</button>`;
+      return `<button class="chip ${isActive ? "is-active" : ""}" data-command-category="${category}" type="button">${label}</button>`;
     })
     .join("");
 

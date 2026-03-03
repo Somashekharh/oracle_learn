@@ -228,7 +228,7 @@ export const SECURITY_CONTROLS = [
     "SELECT owner, object_name, object_type FROM dba_objects WHERE status='INVALID' ORDER BY owner, object_name;",
     "Invalid object count should return to baseline quickly.",
     "Unresolved invalid objects can break business paths silently.",
-    "https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-auditing.html"
+    "https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/administering-the-audit-trail.html"
   ),
   createSecurityControl(
     "sec-ctrl-15",

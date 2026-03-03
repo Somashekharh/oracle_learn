@@ -85,6 +85,7 @@ function renderTabState() {
     const isActive = tab === activeTab;
     button.classList.toggle("is-active", isActive);
     button.setAttribute("aria-selected", String(isActive));
+    button.tabIndex = isActive ? 0 : -1;
   });
 
   Object.entries(tabPanels).forEach(([name, panel]) => {
@@ -93,8 +94,21 @@ function renderTabState() {
     }
     const isActive = name === activeTab;
     panel.hidden = !isActive;
+    panel.setAttribute("aria-hidden", String(!isActive));
     panel.classList.toggle("is-active", isActive);
   });
+}
+
+function activateTab(tabName, shouldFocusButton = false) {
+  if (!tabPanels[tabName]) {
+    return;
+  }
+  activeTab = tabName;
+  renderTabState();
+  if (shouldFocusButton) {
+    const button = tabButtons.find((item) => item.getAttribute("data-tab") === tabName);
+    button?.focus();
+  }
 }
 
 function setActiveChip(buttons, attribute, value) {
@@ -244,8 +258,49 @@ function highlightLabCard(labId) {
 
 tabButtons.forEach((button) => {
   button.addEventListener("click", () => {
-    activeTab = button.getAttribute("data-tab") || "labs";
-    renderTabState();
+    activateTab(button.getAttribute("data-tab") || "labs");
+  });
+
+  button.addEventListener("keydown", (event) => {
+    const currentIndex = tabButtons.indexOf(button);
+    if (currentIndex === -1) {
+      return;
+    }
+
+    if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+      event.preventDefault();
+      const nextIndex = (currentIndex + 1) % tabButtons.length;
+      const nextTab = tabButtons[nextIndex].getAttribute("data-tab") || "labs";
+      activateTab(nextTab, true);
+      return;
+    }
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+      event.preventDefault();
+      const prevIndex = (currentIndex - 1 + tabButtons.length) % tabButtons.length;
+      const prevTab = tabButtons[prevIndex].getAttribute("data-tab") || "labs";
+      activateTab(prevTab, true);
+      return;
+    }
+
+    if (event.key === "Home") {
+      event.preventDefault();
+      const firstTab = tabButtons[0].getAttribute("data-tab") || "labs";
+      activateTab(firstTab, true);
+      return;
+    }
+
+    if (event.key === "End") {
+      event.preventDefault();
+      const lastTab = tabButtons[tabButtons.length - 1].getAttribute("data-tab") || "labs";
+      activateTab(lastTab, true);
+      return;
+    }
+
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      activateTab(button.getAttribute("data-tab") || "labs", true);
+    }
   });
 });
 

@@ -106,7 +106,7 @@ export const DBA_TASKS = [
       "ALTER SYSTEM KILL SESSION 'sid,serial#' IMMEDIATE;"
     ],
     references: [
-      "https://docs.oracle.com/en/database/oracle/oracle-database/19/admin/managing-transactions.html"
+      "https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html"
     ]
   },
   {

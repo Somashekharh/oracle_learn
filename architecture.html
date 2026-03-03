@@ -45,12 +45,12 @@
 
             <div class="flow-mode-grid card" aria-label="Architecture flow modes">
               <div class="filter-row" role="group" aria-label="Choose architecture flow mode">
-                <button class="chip is-active" data-arch-flow="all">All Layers</button>
-                <button class="chip" data-arch-flow="query">Query Path</button>
-                <button class="chip" data-arch-flow="dml">DML + Commit</button>
-                <button class="chip" data-arch-flow="checkpoint">Checkpoint</button>
-                <button class="chip" data-arch-flow="recovery">Recovery</button>
-                <button class="chip" data-arch-flow="shared">Shared Server</button>
+                <button class="chip is-active" data-arch-flow="all" type="button">All Layers</button>
+                <button class="chip" data-arch-flow="query" type="button">Query Path</button>
+                <button class="chip" data-arch-flow="dml" type="button">DML + Commit</button>
+                <button class="chip" data-arch-flow="checkpoint" type="button">Checkpoint</button>
+                <button class="chip" data-arch-flow="recovery" type="button">Recovery</button>
+                <button class="chip" data-arch-flow="shared" type="button">Shared Server</button>
               </div>
               <div class="filter-row" role="group" aria-label="Flow walkthrough controls">
                 <button class="btn btn-primary" id="arch-flow-walk" type="button">Walk Selected Flow</button>
@@ -281,6 +281,7 @@ ORCL          OPEN</pre></div>
         <div class="container card-grid two-col">
           <article class="card">
             <h2>Official Oracle References</h2>
+            <p class="eyebrow">References last verified: March 3, 2026</p>
             <ul>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/process-architecture.html" target="_blank" rel="noreferrer">Process Architecture</a></li>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/memory-architecture.html" target="_blank" rel="noreferrer">Memory Architecture</a></li>
@@ -289,6 +290,7 @@ ORCL          OPEN</pre></div>
           </article>
           <article class="card">
             <h2>Flow Reference Docs</h2>
+            <p class="eyebrow">References last verified: March 3, 2026</p>
             <ul>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/tgsql/sql-processing.html" target="_blank" rel="noreferrer">SQL Processing Pipeline</a></li>
               <li><a href="https://docs.oracle.com/en/database/oracle/oracle-database/19/cncpt/transactions.html" target="_blank" rel="noreferrer">Transactions and Commit Behavior</a></li>
