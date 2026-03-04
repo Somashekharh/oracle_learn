@@ -1,4 +1,5 @@
 import { DBA_TASKS } from "../data/dba-tasks-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const taskGrid = document.getElementById("task-grid");
 const searchInput = document.getElementById("task-search");
@@ -254,20 +255,6 @@ function renderTasks() {
   taskGrid.innerHTML = items.map((task) => taskMarkup(task)).join("");
 }
 
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.append(temp);
-  temp.select();
-  document.execCommand("copy");
-  temp.remove();
-  return Promise.resolve();
-}
-
 searchInput?.addEventListener("input", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLInputElement)) {
@@ -337,12 +324,8 @@ taskGrid?.addEventListener("click", async (event) => {
 
   if (target.matches("[data-copy-command]")) {
     const command = target.getAttribute("data-copy-command") || "";
-    await copyText(command);
-    const originalText = target.textContent;
-    target.textContent = "Copied";
-    window.setTimeout(() => {
-      target.textContent = originalText;
-    }, 900);
+    const copied = await copyTextWithFallback(command, "Copy this command");
+    setTemporaryButtonLabel(target, copied, { timeoutMs: 900 });
     return;
   }
 

@@ -1,4 +1,5 @@
 import { RESOURCE_CATEGORIES, RESOURCE_LINKS } from "../data/resources-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const searchInput = document.getElementById("resource-search");
 const categoryFilters = document.getElementById("resource-category-filters");
@@ -195,20 +196,6 @@ function renderResources() {
   renderBookmarkPanel();
 }
 
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.append(temp);
-  temp.select();
-  document.execCommand("copy");
-  temp.remove();
-  return Promise.resolve();
-}
-
 function highlightResource(resourceId) {
   const card = document.getElementById(`resource-card-${resourceId}`);
   if (!card) {
@@ -273,12 +260,8 @@ clearBookmarksButton?.addEventListener("click", () => {
 async function handleResourceAction(target) {
   if (target.matches("[data-copy-resource]")) {
     const link = target.getAttribute("data-copy-resource") || "";
-    await copyText(link);
-    const original = target.textContent;
-    target.textContent = "Copied";
-    window.setTimeout(() => {
-      target.textContent = original;
-    }, 900);
+    const copied = await copyTextWithFallback(link, "Copy this resource link");
+    setTemporaryButtonLabel(target, copied, { timeoutMs: 900 });
     return true;
   }
 

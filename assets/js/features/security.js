@@ -1,4 +1,5 @@
 import { SECURITY_CONTROLS, SECURITY_DOMAINS, SECURITY_PLAYBOOKS } from "../data/security-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const searchInput = document.getElementById("security-search");
 const domainFilterContainer = document.getElementById("security-domain-filters");
@@ -219,20 +220,6 @@ function renderPlaybooks() {
   ).join("");
 }
 
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.append(temp);
-  temp.select();
-  document.execCommand("copy");
-  temp.remove();
-  return Promise.resolve();
-}
-
 searchInput?.addEventListener("input", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLInputElement)) {
@@ -274,12 +261,8 @@ controlGrid?.addEventListener("click", async (event) => {
 
   if (target.matches("[data-copy-command]")) {
     const command = target.getAttribute("data-copy-command") || "";
-    await copyText(command);
-    const original = target.textContent;
-    target.textContent = "Copied";
-    window.setTimeout(() => {
-      target.textContent = original;
-    }, 900);
+    const copied = await copyTextWithFallback(command, "Copy this command");
+    setTemporaryButtonLabel(target, copied, { timeoutMs: 900 });
     return;
   }
 

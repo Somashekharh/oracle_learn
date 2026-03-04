@@ -1,4 +1,5 @@
 import { BLOG_POSTS } from "../data/blog-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const searchInput = document.getElementById("blog-search");
 const sortSelect = document.getElementById("blog-sort");
@@ -214,35 +215,19 @@ function renderDetail(post, posts) {
     button.addEventListener("click", async () => {
       const commandIndex = Number(button.getAttribute("data-command-index") || "-1");
       const command = post.triageCommands[commandIndex] || "";
-      try {
-        await navigator.clipboard.writeText(command);
-        button.textContent = "Copied";
-        window.setTimeout(() => {
-          button.textContent = "Copy";
-        }, 1200);
-      } catch {
-        button.textContent = "Copy failed";
-        window.setTimeout(() => {
-          button.textContent = "Copy";
-        }, 1400);
-      }
+      const copied = await copyTextWithFallback(command, "Copy this triage command");
+      setTemporaryButtonLabel(button, copied, { resetLabel: "Copy", timeoutMs: 1200 });
     });
   });
 
   const copyLinkButton = detailContainer.querySelector("[data-copy-link]");
   copyLinkButton?.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      copyLinkButton.textContent = "Link copied";
-      window.setTimeout(() => {
-        copyLinkButton.textContent = "Copy Post Link";
-      }, 1200);
-    } catch {
-      copyLinkButton.textContent = "Copy failed";
-      window.setTimeout(() => {
-        copyLinkButton.textContent = "Copy Post Link";
-      }, 1400);
-    }
+    const copied = await copyTextWithFallback(window.location.href, "Copy this post link");
+    setTemporaryButtonLabel(copyLinkButton, copied, {
+      successLabel: "Link copied",
+      resetLabel: "Copy Post Link",
+      timeoutMs: 1200
+    });
   });
 
   const navButtons = Array.from(detailContainer.querySelectorAll("[data-blog-nav]"));

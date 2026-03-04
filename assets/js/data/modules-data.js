@@ -272,15 +272,17 @@ export const MODULE_LESSONS = [
     moduleId: "Module 5: Performance and Backup",
     level: "Advanced",
     title: "AWR/ASH Investigation Workflow",
-    summary: "Build repeatable workflow for before/after performance analysis and incident diagnosis.",
+    summary: "Build repeatable workflow for before/after performance analysis and incident diagnosis in licensed environments.",
     keyPoints: [
       "Manual snapshots help benchmark tuning changes.",
       "ASH provides activity-level visibility into hot sessions.",
+      "AWR/ASH require Diagnostics Pack licensing; use Statspack plus dynamic performance views where packs are not licensed.",
       "Always pair diagnostic output with actionable remediation."
     ],
     commands: [
       "EXEC DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT;",
-      "SELECT sample_time, session_id, event FROM v$active_session_history FETCH FIRST 20 ROWS ONLY;"
+      "SELECT sample_time, session_id, event FROM v$active_session_history FETCH FIRST 20 ROWS ONLY;",
+      "SELECT event, total_waits, time_waited_micro/1000000 sec_waited FROM v$system_event ORDER BY time_waited_micro DESC FETCH FIRST 10 ROWS ONLY;"
     ]
   },
   {

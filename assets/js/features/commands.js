@@ -1,4 +1,5 @@
 import { COMMAND_ENTRIES, COMMAND_CATEGORIES } from "../data/commands-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const searchInput = document.getElementById("command-search");
 const levelButtons = Array.from(document.querySelectorAll("[data-command-level]"));
@@ -158,20 +159,6 @@ function renderCommands() {
     .join("");
 }
 
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.append(temp);
-  temp.select();
-  document.execCommand("copy");
-  temp.remove();
-  return Promise.resolve();
-}
-
 searchInput?.addEventListener("input", (event) => {
   const target = event.target;
   if (!(target instanceof HTMLInputElement)) {
@@ -201,12 +188,8 @@ resultsContainer?.addEventListener("click", async (event) => {
   }
 
   const text = target.getAttribute("data-copy") || "";
-  await copyText(text);
-  const original = target.textContent;
-  target.textContent = "Copied";
-  window.setTimeout(() => {
-    target.textContent = original;
-  }, 1000);
+  const copied = await copyTextWithFallback(text, "Copy this command");
+  setTemporaryButtonLabel(target, copied, { timeoutMs: 1000 });
 });
 
 renderCategoryFilters();

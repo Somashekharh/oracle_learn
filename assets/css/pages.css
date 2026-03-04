@@ -96,15 +96,20 @@
   margin-top: 0.8rem;
 }
 
+.page-architecture .container {
+  width: min(1540px, 96%);
+}
+
 .architecture-layout {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr;
-  gap: 1rem;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
   align-items: start;
 }
 
 .diagram-stage {
   position: relative;
+  isolation: isolate;
 }
 
 .diagram-controls {
@@ -112,6 +117,8 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 4;
 }
 
 .diagram-legend {
@@ -119,6 +126,8 @@
   flex-wrap: wrap;
   gap: 0.8rem;
   margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 4;
 }
 
 .legend-item {
@@ -156,14 +165,28 @@
   border: 1px solid rgba(120, 175, 248, 0.4);
   border-radius: var(--radius-lg);
   background: linear-gradient(155deg, rgba(8, 18, 39, 0.95), rgba(6, 13, 27, 0.97));
-  padding: 0.85rem;
+  padding: 1rem;
+  overflow: auto;
+  max-height: none;
+  display: flex;
+  justify-content: center;
   transform-origin: center;
   transition: transform 0.28s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .diagram-canvas svg {
-  width: 100%;
+  width: min(100%, 1560px);
+  min-width: 0;
   height: auto;
+  display: block;
+  text-rendering: geometricPrecision;
+  shape-rendering: geometricPrecision;
+}
+
+.diagram-canvas svg text {
+  pointer-events: none;
 }
 
 .diagram-stage.is-expanded {
@@ -185,11 +208,17 @@
   stroke-width: 2;
 }
 
+.diagram-instance {
+  pointer-events: none;
+}
+
 .diagram-node {
   fill: rgba(20, 48, 94, 0.7);
   stroke: rgba(122, 183, 255, 0.44);
-  stroke-width: 2;
+  stroke-width: 1.7;
   cursor: pointer;
+  pointer-events: all;
+  vector-effect: non-scaling-stroke;
   transition: fill 0.25s ease, stroke 0.25s ease, transform 0.25s ease;
 }
 
@@ -224,16 +253,26 @@
   transform: translateY(-1px);
 }
 
+.diagram-node.is-preview {
+  stroke: rgba(118, 233, 255, 0.9);
+  filter: drop-shadow(0 0 4px rgba(76, 195, 255, 0.42));
+}
+
+.diagram-node.is-pinned {
+  stroke: rgba(117, 255, 219, 0.95);
+  filter: drop-shadow(0 0 8px rgba(102, 255, 222, 0.35));
+}
+
 .diagram-label,
 .diagram-label-main {
   fill: #d7ebff;
-  font-size: 14px;
+  font-size: 13px;
   font-family: "Space Grotesk", sans-serif;
   pointer-events: none;
 }
 
 .diagram-label-main {
-  font-size: 19px;
+  font-size: 17px;
   fill: #89dcff;
 }
 
@@ -248,6 +287,24 @@
 
 .flow-mode-grid {
   margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 4;
+}
+
+.line-inspector {
+  margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 4;
+}
+
+.line-inspector h3 {
+  margin-bottom: 0.45rem;
+  color: var(--accent-400);
+  font-size: 1rem;
+}
+
+.line-inspector p {
+  margin-bottom: 0.7rem;
 }
 
 .flow-desc {
@@ -256,12 +313,45 @@
   font-size: 0.9rem;
 }
 
+.flow-desc.is-updating {
+  animation: flowDescPulse 0.34s cubic-bezier(0.22, 0.8, 0.31, 1) 1;
+}
+
+@keyframes flowDescPulse {
+  0% {
+    opacity: 0.58;
+    transform: translateY(2px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.runtime-note {
+  margin-top: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--text-300);
+}
+
+.runtime-note[data-state="warn"] {
+  color: #ffd5a3;
+}
+
+.runtime-note[data-state="error"] {
+  color: #ffb9cc;
+}
+
 .diagram-flow-line {
   fill: none;
-  stroke-width: 2.6;
-  stroke-dasharray: 8 7;
-  animation: pathPulse 5s linear infinite;
-  opacity: 0.95;
+  stroke-width: 1.9;
+  stroke-dasharray: 7 8;
+  animation: pathPulse 8s linear infinite;
+  opacity: 0.82;
+  pointer-events: stroke;
+  cursor: help;
+  transition: opacity 0.2s ease, stroke-width 0.2s ease;
 }
 
 .diagram-flow-line.sql-path {
@@ -296,13 +386,43 @@
   stroke: rgba(255, 126, 126, 0.95);
 }
 
+.diagram-flow-line.is-focused {
+  stroke-width: 2.95;
+  opacity: 1;
+  filter: drop-shadow(0 0 4px rgba(101, 226, 255, 0.68));
+}
+
+.diagram-flow-line:focus-visible {
+  outline: none;
+}
+
 .diagram-flow-line.is-hidden,
 .flow-particle.is-hidden {
-  opacity: 0.1;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.diagram-flow-hit {
+  fill: none;
+  stroke: rgba(0, 0, 0, 0);
+  stroke-width: 12;
+  pointer-events: stroke;
+  cursor: help;
+}
+
+.diagram-flow-hit.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.diagram-flow-hit:focus-visible {
+  outline: none;
 }
 
 .flow-particle {
   opacity: 0.95;
+  pointer-events: none;
 }
 
 .flow-particle.sql-particle {
@@ -319,6 +439,305 @@
 
 .diagram-node.is-dim {
   opacity: 0.32;
+}
+
+.architecture-mode-grid {
+  margin-bottom: 0.8rem;
+  position: relative;
+  z-index: 4;
+}
+
+.architecture-mode-grid .chip {
+  transition: transform 0.2s ease, box-shadow 0.25s ease, background 0.25s ease;
+}
+
+.architecture-mode-grid .chip.is-active {
+  transform: translateY(-1px);
+  box-shadow: 0 0 0 1px rgba(86, 228, 255, 0.4), 0 0 24px rgba(72, 206, 255, 0.28);
+  animation: modeChipGlow 1.9s ease-in-out infinite;
+}
+
+.architecture-mode-grid .chip.is-burst {
+  animation: modeChipBurst 0.4s cubic-bezier(0.22, 0.8, 0.31, 1) 1;
+}
+
+@keyframes modeChipGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 1px rgba(86, 228, 255, 0.36), 0 0 16px rgba(72, 206, 255, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 0 1px rgba(102, 236, 255, 0.62), 0 0 28px rgba(98, 214, 255, 0.4);
+  }
+}
+
+@keyframes modeChipBurst {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  45% {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 0 0 1px rgba(115, 240, 255, 0.78), 0 0 34px rgba(88, 218, 255, 0.5);
+  }
+
+  100% {
+    transform: translateY(0) scale(1);
+    box-shadow: 0 0 0 1px rgba(86, 228, 255, 0.4), 0 0 20px rgba(72, 206, 255, 0.22);
+  }
+}
+
+.architecture-side-col {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  align-items: start;
+}
+
+.architecture-side-col .info-panel {
+  grid-column: 1 / -1;
+}
+
+.architecture-side-card h2 {
+  margin-bottom: 0.7rem;
+}
+
+.architecture-side-card p {
+  margin-bottom: 0.68rem;
+}
+
+.architecture-stack {
+  margin-top: 0.95rem;
+  max-height: 520px;
+  opacity: 1;
+  transform: translateY(0);
+  overflow: hidden;
+  transition: opacity 0.26s ease, transform 0.26s ease, max-height 0.26s ease, margin-top 0.26s ease;
+}
+
+.architecture-stack h2 {
+  margin-bottom: 0.72rem;
+}
+
+.architecture-stack.is-hidden {
+  opacity: 0;
+  transform: translateY(-8px);
+  max-height: 0;
+  margin-top: 0;
+  pointer-events: none;
+}
+
+.architecture-stack.is-revealing {
+  animation: storagePanelReveal 0.45s cubic-bezier(0.22, 0.8, 0.31, 1) 1;
+}
+
+@keyframes storagePanelReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.stack-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.68rem;
+}
+
+.stack-item {
+  border: 1px solid rgba(112, 173, 248, 0.33);
+  border-radius: 12px;
+  padding: 0.72rem;
+  background: rgba(10, 23, 46, 0.78);
+}
+
+.stack-item h3 {
+  margin-bottom: 0.36rem;
+  color: var(--accent-400);
+  font-size: 0.92rem;
+}
+
+.stack-item p {
+  margin: 0;
+  color: var(--text-200);
+  font-size: 0.84rem;
+}
+
+.diagram-overlay {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+.diagram-overlay-panel {
+  fill: rgba(5, 14, 30, 0.93);
+  stroke: rgba(109, 184, 255, 0.42);
+  stroke-width: 1.5;
+}
+
+.diagram-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translateY(6px) scale(0.99);
+}
+
+.diagram-overlay.is-revealing .diagram-overlay-panel,
+.diagram-overlay.is-revealing .diagram-node,
+.diagram-overlay.is-revealing text {
+  animation: overlayReveal 0.52s cubic-bezier(0.22, 0.8, 0.31, 1) 1;
+}
+
+@keyframes overlayReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(10px) scale(0.98);
+    filter: drop-shadow(0 0 0 rgba(111, 232, 255, 0));
+  }
+
+  60% {
+    opacity: 1;
+    transform: translateY(-1px) scale(1.01);
+    filter: drop-shadow(0 0 8px rgba(111, 232, 255, 0.38));
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: none;
+  }
+}
+
+.diagram-node.is-trace {
+  fill: rgba(147, 95, 27, 0.75);
+  stroke: rgba(255, 215, 133, 0.96);
+  stroke-width: 2.5;
+}
+
+.diagram-stage.is-interview .diagram-node {
+  opacity: 0.42;
+}
+
+.diagram-stage.is-interview .diagram-node.is-active,
+.diagram-stage.is-interview .diagram-node.is-trace {
+  opacity: 1;
+  filter: drop-shadow(0 0 8px rgba(104, 231, 255, 0.46));
+}
+
+.diagram-stage.is-structure-overlay .diagram-flow-line,
+.diagram-stage.is-structure-overlay .flow-particle,
+.diagram-stage.is-structure-overlay .diagram-flow-hit {
+  visibility: visible !important;
+}
+
+.diagram-stage.is-structure-overlay .diagram-flow-line {
+  opacity: 0.36 !important;
+  pointer-events: stroke !important;
+}
+
+.diagram-stage.is-structure-overlay .flow-particle {
+  opacity: 0.52 !important;
+}
+
+.diagram-stage.is-structure-overlay .diagram-flow-hit {
+  opacity: 1 !important;
+  pointer-events: stroke !important;
+}
+
+.diagram-stage.is-structure-overlay .diagram-flow-line.is-focused {
+  opacity: 1 !important;
+  stroke-width: 3.2;
+}
+
+body.is-arch-expanded {
+  overflow: hidden;
+}
+
+.interview-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.56rem;
+  margin-bottom: 0.7rem;
+}
+
+.interview-option {
+  justify-content: flex-start;
+  text-align: left;
+  min-height: 44px;
+}
+
+.interview-option.is-correct {
+  background: linear-gradient(135deg, #57de90, #7bffd4) !important;
+  border-color: transparent !important;
+  color: #02110c !important;
+}
+
+.interview-option.is-wrong {
+  background: rgba(193, 70, 98, 0.25) !important;
+  border-color: rgba(255, 140, 163, 0.72) !important;
+  color: #ffdce5 !important;
+}
+
+.scn-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.56rem;
+  overflow: visible;
+  padding-bottom: 0.24rem;
+  margin: 0.72rem 0 0.45rem;
+}
+
+.scn-point {
+  min-width: 0;
+  max-width: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-align: left;
+  appearance: none;
+  border: 1px solid rgba(119, 174, 251, 0.38);
+  border-radius: 12px;
+  background: rgba(10, 26, 52, 0.78);
+  color: var(--text-200);
+  cursor: pointer;
+  padding: 0.62rem;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.scn-point-title {
+  color: #d8ecff;
+  font-weight: 600;
+  font-size: 0.84rem;
+}
+
+.scn-point-note {
+  font-size: 0.76rem;
+  color: var(--text-300);
+}
+
+.scn-point.is-past {
+  border-color: rgba(98, 231, 166, 0.56);
+  background: rgba(34, 100, 76, 0.34);
+}
+
+.scn-point.is-active {
+  border-color: rgba(94, 236, 255, 0.86);
+  background: rgba(22, 77, 128, 0.52);
+}
+
+.scn-point.is-upcoming {
+  opacity: 0.76;
+}
+
+.scn-point:focus-visible {
+  outline: 2px solid rgba(95, 227, 255, 0.54);
+  outline-offset: 2px;
 }
 
 @keyframes pathPulse {
@@ -982,6 +1401,18 @@
     grid-template-columns: 1fr;
   }
 
+  .diagram-canvas {
+    max-height: none;
+  }
+
+  .diagram-canvas svg {
+    min-width: 0;
+  }
+
+  .stack-grid {
+    grid-template-columns: 1fr;
+  }
+
   .roadmap-toolbar-row {
     flex-direction: column;
   }
@@ -999,6 +1430,14 @@
   .diagram-label,
   .diagram-label-main {
     font-size: 12px;
+  }
+
+  .diagram-canvas {
+    max-height: none;
+  }
+
+  .diagram-canvas svg {
+    min-width: 820px;
   }
 
   .flow-node {
@@ -1041,6 +1480,23 @@
 
   .home-stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .interview-options {
+    grid-template-columns: 1fr;
+  }
+
+  .architecture-side-col {
+    grid-template-columns: 1fr;
+  }
+
+  .scn-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .architecture-mode-grid .chip {
+    flex: 1 1 calc(50% - 0.3rem);
+    text-align: center;
   }
 
   .resources-stats {

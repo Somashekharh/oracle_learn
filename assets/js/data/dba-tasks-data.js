@@ -116,10 +116,10 @@ export const DBA_TASKS = [
     priority: "High",
     executionWindow: "Weekly planned analysis window",
     slaTarget: "Top 10 expensive SQL reviewed and actioned weekly.",
-    why: "Controls response time and resource usage by analyzing top SQL and wait events.",
+    why: "Controls response time and resource usage by analyzing top SQL and wait events with licensing-safe diagnostics.",
     riskIfSkipped: "Slow queries accumulate, CPU spikes, and user experience degrades under load.",
     steps: [
-      "Review AWR/ASH top waits and SQL by elapsed time.",
+      "Review top waits and SQL by elapsed time using AWR/ASH (licensed) or Statspack plus v$ views.",
       "Inspect execution plans for regressions.",
       "Validate index health and stale statistics.",
       "Apply SQL tuning and monitor improvements.",
@@ -128,6 +128,7 @@ export const DBA_TASKS = [
     commands: [
       "SELECT sql_id, executions, elapsed_time/1000000 elapsed_sec FROM v$sqlstats ORDER BY elapsed_time DESC FETCH FIRST 10 ROWS ONLY;",
       "SELECT event, time_waited_micro/1000000 sec_waited FROM v$system_event ORDER BY time_waited_micro DESC FETCH FIRST 10 ROWS ONLY;",
+      "-- Use ASH query only when Diagnostics Pack is licensed in your environment.",
       "SELECT session_id, sql_id, event, wait_class FROM v$active_session_history WHERE sample_time > SYSDATE - (10/1440) FETCH FIRST 30 ROWS ONLY;",
       "SELECT owner, table_name, stale_stats FROM dba_tab_statistics WHERE stale_stats='YES';"
     ],

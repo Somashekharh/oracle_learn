@@ -195,12 +195,12 @@ export const RESOURCE_LINKS = [
   ),
   createResource(
     "res-19",
-    "Oracle Linux Command Line Labs",
-    "https://docs.oracle.com/en/operating-systems/oracle-linux/",
+    "Oracle Linux Monitoring and Tuning",
+    "https://docs.oracle.com/en/operating-systems/oracle-linux/9/monitoring/",
     "Linux Platform",
-    "Beginner",
-    "Hands-on command-line learning path for Linux fundamentals.",
-    ["shell", "cli", "practice"]
+    "Intermediate",
+    "Host-level monitoring guidance for CPU, memory, storage, and process diagnostics used during DBA incidents.",
+    ["iostat", "vmstat", "sar", "oswatcher", "monitoring"]
   ),
   createResource(
     "res-20",
