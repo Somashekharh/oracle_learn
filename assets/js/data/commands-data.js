@@ -220,9 +220,12 @@ const PERFORMANCE_MONITORING = [
     "Performance Monitoring",
     "Intermediate",
     "EXEC DBMS_WORKLOAD_REPOSITORY.CREATE_SNAPSHOT;",
-    "Creates manual AWR snapshot for targeted before/after analysis.",
-    "Capture metrics before deployment and after deployment.",
-    ["Not licensing/entitlement aware in non-EE setups.", "Snapshots without workload context notes."],
+    "Creates manual AWR snapshot for targeted before/after analysis (Diagnostics Pack licensed environments).",
+    "Capture metrics before and after deployment when Diagnostics Pack is enabled; otherwise use Statspack plus v$ metrics.",
+    [
+      "Running AWR commands without Diagnostics Pack entitlement.",
+      "Capturing snapshots without recording workload context and change window details."
+    ],
     "PL/SQL procedure successfully completed."
   ),
   createCommand(
@@ -1130,9 +1133,12 @@ const COMMAND_EXPANSION = [
     "Performance Monitoring",
     "Advanced",
     "SELECT session_id, session_serial#, sql_id, event, wait_class FROM v$active_session_history WHERE sample_time > SYSDATE - (5/1440) ORDER BY sample_time DESC FETCH FIRST 30 ROWS ONLY;",
-    "Samples recent active-session history to identify dominant waits and SQL IDs.",
-    "Rapid incident triage without waiting for full AWR report.",
-    ["Using ASH in unsupported editions.", "Reading samples as exact totals instead of representative activity."],
+    "Samples recent active-session history to identify dominant waits and SQL IDs (Diagnostics Pack licensing required).",
+    "Rapid incident triage in licensed environments; use v$session and v$system_event if ASH is not entitled.",
+    [
+      "Using ASH where Diagnostics Pack is not licensed.",
+      "Reading ASH samples as exact totals instead of representative activity."
+    ],
     "SESSION_ID SQL_ID   EVENT                    WAIT_CLASS\n128       7d2a... db file sequential read   User I/O"
   ),
   createCommand(

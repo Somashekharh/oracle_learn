@@ -98,7 +98,7 @@ export const SECURITY_CONTROLS = [
     "SELECT policy_name, enabled_opt FROM audit_unified_enabled_policies ORDER BY policy_name;",
     "Policy for DBA changes should be present and enabled.",
     "No admin audit trail means weak incident reconstruction.",
-    "https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/administering-the-audit-trail.html"
+    "https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/recompiling-all-invalid-objects.html"
   ),
   createSecurityControl(
     "sec-ctrl-05",
@@ -228,7 +228,7 @@ export const SECURITY_CONTROLS = [
     "SELECT owner, object_name, object_type FROM dba_objects WHERE status='INVALID' ORDER BY owner, object_name;",
     "Invalid object count should return to baseline quickly.",
     "Unresolved invalid objects can break business paths silently.",
-    "https://docs.oracle.com/en/database/oracle/oracle-database/19/dbseg/administering-the-audit-trail.html"
+    "https://docs.oracle.com/en/database/oracle/oracle-database/19/ladbi/recompiling-all-invalid-objects.html"
   ),
   createSecurityControl(
     "sec-ctrl-15",

@@ -475,19 +475,9 @@ export const DATAFLOW_STEPS_BY_OPERATION = {
       stage: "dbwr_write",
       explanation: "DBWn later writes dirty buffers to datafiles during checkpoints (not necessarily at commit instant).",
       commandHint: "SELECT name, value FROM v$sysstat WHERE name='physical writes';",
-      watchpoint: "Understand asynchronous datafile writes vs synchronous commit durability.",
-      failureRisk: "Confusing these mechanics can lead to incorrect recovery assumptions.",
+      watchpoint: "Commit durability comes from redo flush; ARCn archiving happens on log switch, not on every commit.",
+      failureRisk: "Confusing commit, checkpoint, and archive timelines leads to incorrect RCA and recovery assumptions.",
       animationTargetIds: ["dbwr_write", "datafile_io"]
-    },
-    {
-      id: "commit-6",
-      operation: "COMMIT",
-      stage: "archiver",
-      explanation: "ARCn archives completed redo log groups as switches occur.",
-      commandHint: "SELECT process, status, log_sequence FROM v$archive_processes;",
-      watchpoint: "Ensure archiving keeps pace with redo generation.",
-      failureRisk: "Archive backlog can eventually stall log reuse and DML.",
-      animationTargetIds: ["archiver"]
     }
   ],
 

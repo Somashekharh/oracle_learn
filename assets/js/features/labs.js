@@ -1,5 +1,6 @@
 import { LAB_ITEMS } from "../data/labs-data.js";
 import { FLASHCARDS } from "../data/flashcards-data.js";
+import { copyTextWithFallback, setTemporaryButtonLabel } from "../utils/clipboard.js";
 
 const tabButtons = Array.from(document.querySelectorAll("[data-tab]"));
 const tabPanels = {
@@ -208,20 +209,6 @@ function renderLabs() {
   labGrid.innerHTML = items.map((item) => labCard(item)).join("");
 }
 
-function copyText(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    return navigator.clipboard.writeText(text);
-  }
-
-  const temp = document.createElement("textarea");
-  temp.value = text;
-  document.body.append(temp);
-  temp.select();
-  document.execCommand("copy");
-  temp.remove();
-  return Promise.resolve();
-}
-
 function renderFlashcard() {
   const card = FLASHCARDS[flashIndex];
   if (!card || !flashcardWrap || !flashcardMeta || !flashcardFront || !flashcardBack) {
@@ -362,12 +349,8 @@ labGrid?.addEventListener("click", async (event) => {
 
   if (target.matches("[data-copy-solution]")) {
     const text = target.getAttribute("data-copy-solution") || "";
-    await copyText(text);
-    const original = target.textContent;
-    target.textContent = "Copied";
-    window.setTimeout(() => {
-      target.textContent = original;
-    }, 900);
+    const copied = await copyTextWithFallback(text, "Copy this solution");
+    setTemporaryButtonLabel(target, copied, { timeoutMs: 900 });
     return;
   }
 

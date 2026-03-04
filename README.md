@@ -50,6 +50,23 @@ python3 -m http.server 5500
 
 Then open `http://localhost:5500`.
 
+## Validate Before Deploy
+
+Run static validation checks from repository root:
+
+```bash
+python3 scripts/validate_site.py
+```
+
+What it checks:
+
+- Required pages exist
+- Shared nav/footer mounts + `main.js` are present on all pages
+- All local `href` / `src` references resolve
+- Minimum content volume targets for commands, architecture nodes, tasks, labs, flashcards, quiz, blog, and PDFs
+
+A GitHub Action (`.github/workflows/site-health.yml`) runs the same validation on push and pull requests.
+
 ## Deploy to GitHub Pages (Root Publish)
 
 1. Push this repository to GitHub.
@@ -65,11 +82,10 @@ Then open `http://localhost:5500`.
 
 - Module lessons: `24`
 - Command entries: `137`
-- Architecture nodes: `34`
+- Architecture nodes: `43`
 - Real DBA tasks: `7`
 - Lab items: `24`
 - Flashcards: `40`
 - Quiz questions: `30`
 - Blog posts: `6`
 - Watermarked notes: `3` PDF files
-# oracle_learn

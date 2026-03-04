@@ -213,12 +213,12 @@ export const ARCHITECTURE_NODES = [
     "pga",
     "PGA",
     "Memory",
-    "Private process memory for sorts, hash joins, and runtime session state.",
-    "PGA efficiency affects temp usage and query performance.",
+    "Program Global Area is private memory allocated for each server/background process and is separate from the SGA.",
+    "PGA sizing controls sort/hash efficiency and directly affects TEMP spill behavior.",
     "Low PGA leads to temporary spill and slower complex SQL.",
     "SELECT name, value FROM v$pgastat WHERE name IN ('total PGA allocated','cache hit percentage');",
     "NAME                    VALUE\n---------------------- -------\ntotal PGA allocated    768000000\ncache hit percentage   95",
-    "For ORA-01652 and temp pressure, validate PGA workarea effectiveness."
+    "For ORA-01652 and TEMP pressure, verify PGA workarea efficiency before increasing TEMP blindly."
   ),
   node(
     "dbwn",
@@ -246,9 +246,9 @@ export const ARCHITECTURE_NODES = [
     "ckpt",
     "CKPT",
     "Background",
-    "Updates datafile headers and control files with checkpoint metadata.",
-    "Reduces crash recovery duration by advancing checkpoint boundaries.",
-    "Delayed checkpoints extend restart recovery time.",
+    "Signals DBWn and updates checkpoint metadata in control file and datafile headers (CKPT does not write data blocks).",
+    "Advancing checkpoint position reduces instance recovery time after crash restart.",
+    "Checkpoint lag increases crash-recovery duration and write-pressure risk.",
     "SELECT checkpoint_change#, checkpoint_time FROM v$datafile_header ORDER BY file# FETCH FIRST 5 ROWS ONLY;",
     "CHECKPOINT_CHANGE# CHECKPOINT_TIME\n------------------ -------------------\n1549910302         02-MAR-26 22:20:31",
     "Post-restart recovery planning should include checkpoint status review."
@@ -276,12 +276,23 @@ export const ARCHITECTURE_NODES = [
     "After application node failures, confirm PMON cleanup behavior."
   ),
   node(
+    "pman",
+    "PMAN",
+    "Background",
+    "Process Manager coordinates process startup and cleanup for the PMON process group.",
+    "Helps maintain process lifecycle control in modern Oracle process architecture.",
+    "If PMAN-related process management fails, background process startup/restart behavior can degrade.",
+    "SELECT name, description FROM v$bgprocess WHERE name='PMAN';",
+    "NAME DESCRIPTION\n---- ---------------------------------\nPMAN process manager process",
+    "During startup anomalies, verify PMAN visibility in v$bgprocess before deeper OS-level debugging."
+  ),
+  node(
     "arcn",
     "ARCn",
     "Background",
-    "Archives full online redo logs to archive destinations in ARCHIVELOG mode.",
-    "Required for point-in-time and media recovery.",
-    "Archive backlog can block log reuse and DML progression.",
+    "Copies full online redo log files to archive destinations in ARCHIVELOG mode.",
+    "Archived redo is required for media recovery, point-in-time recovery, and standby apply.",
+    "Archive destination backlog can block online redo reuse and eventually stall DML.",
     "SELECT process, status, log_sequence FROM v$archive_processes ORDER BY process;",
     "PROCESS STATUS   LOG_SEQUENCE\n------- -------- ------------\nARC0    RUNNING  14520",
     "Archive destination capacity must be monitored proactively in production."
@@ -395,5 +406,93 @@ export const ARCHITECTURE_NODES = [
     "SELECT name, value FROM v$parameter WHERE name IN ('spfile','remote_login_passwordfile');",
     "NAME                        VALUE\n--------------------------- ----------------\nspfile                      /u01/.../spfileORCL.ora\nremote_login_passwordfile   EXCLUSIVE",
     "Before restart windows, validate parameter source and password file mode."
+  ),
+  node(
+    "cdb_root",
+    "CDB Root",
+    "Multitenant",
+    "Root container (CDB$ROOT) that stores Oracle-supplied metadata and common users for the CDB.",
+    "Defines shared metadata and common administration scope across all pluggable databases.",
+    "Root corruption or accidental common-user changes can impact every PDB in the container database.",
+    "SELECT con_id, name, open_mode FROM v$containers ORDER BY con_id;",
+    "CON_ID NAME      OPEN_MODE\n------ --------- ----------\n1      CDB$ROOT  READ WRITE\n2      PDB$SEED  READ ONLY\n3      APPPDB    READ WRITE",
+    "During tenant onboarding, validate root and PDB open states before routing traffic."
+  ),
+  node(
+    "pdb_seed",
+    "PDB Seed",
+    "Multitenant",
+    "PDB$SEED is the system-provided template used to create new pluggable databases quickly.",
+    "Ensures consistent and standardized provisioning baseline for new PDB creation.",
+    "If PDB$SEED is unavailable or corrupted, creating new PDBs can fail.",
+    "SELECT name, open_mode FROM v$pdbs WHERE name='PDB$SEED';",
+    "NAME      OPEN_MODE\n--------  ---------\nPDB$SEED READ ONLY",
+    "Before large onboarding cycles, verify PDB$SEED open mode and clone readiness."
+  ),
+  node(
+    "pdb_sales",
+    "PDB Sales",
+    "Multitenant",
+    "Application pluggable database isolated within a shared CDB instance.",
+    "Supports tenant-level isolation while reusing shared background processes and memory.",
+    "If closed or restricted, the mapped application service is unavailable for that tenant only.",
+    "SELECT name, open_mode, restricted FROM v$pdbs WHERE name='PDB_SALES';",
+    "NAME       OPEN_MODE   RESTRICTED\n--------- ---------- -----------\nPDB_SALES READ WRITE NO",
+    "When one tenant reports outage, check PDB open mode before instance-wide troubleshooting."
+  ),
+  node(
+    "pdb_hr",
+    "PDB HR",
+    "Multitenant",
+    "Another pluggable database in the same CDB used for independent schemas and services.",
+    "Illustrates workload isolation and independent patch/testing windows in multitenant design.",
+    "Incorrect service mapping can route traffic to wrong PDB and expose data boundaries.",
+    "SELECT name, guid, open_mode FROM v$pdbs WHERE name='PDB_HR';",
+    "NAME   GUID                                 OPEN_MODE\n-----  ------------------------------------ ----------\nPDB_HR D5D0...A31B                           READ WRITE",
+    "For environment segregation, validate service-to-PDB mapping after startup or failover."
+  ),
+  node(
+    "rac_instance2",
+    "RAC Instance 2",
+    "RAC",
+    "Second Oracle instance in RAC attached to the same database files and cluster services.",
+    "Provides scale-out and high availability across nodes.",
+    "If one RAC node fails, surviving instances continue service but rebalancing and failover occur.",
+    "SELECT inst_id, instance_name, status, host_name FROM gv$instance ORDER BY inst_id;",
+    "INST_ID INSTANCE_NAME STATUS HOST_NAME\n------- ------------- ------ ----------\n1       ORCL1         OPEN   dbnode01\n2       ORCL2         OPEN   dbnode02",
+    "During node failure, verify surviving instance status and service relocation timeline."
+  ),
+  node(
+    "rac_interconnect",
+    "RAC Interconnect",
+    "RAC",
+    "Private network channel used for cache fusion and block transfer between RAC instances.",
+    "Critical for low-latency global cache communication.",
+    "Interconnect latency causes gc wait event spikes and cross-instance slowdown.",
+    "SELECT inst_id, name, value FROM gv$sysstat WHERE name LIKE 'gc%block%' FETCH FIRST 12 ROWS ONLY;",
+    "INST_ID NAME                               VALUE\n------- ---------------------------------- -------\n1       gc cr blocks received                422113\n2       gc current blocks received           285764",
+    "If gc waits increase suddenly, correlate interconnect network health with global cache stats."
+  ),
+  node(
+    "asm_diskgroup",
+    "ASM Disk Group",
+    "Storage",
+    "Automatic Storage Management disk group hosting database files, redo, and control files.",
+    "Balances I/O and simplifies file management across storage devices.",
+    "Disk group space pressure or disk failures can impact multiple database file types at once.",
+    "SELECT name, state, type, total_mb, free_mb FROM v$asm_diskgroup ORDER BY name;",
+    "NAME  STATE  TYPE   TOTAL_MB FREE_MB\n+DATA MOUNTED EXTERN  819200   301122\n+FRA  MOUNTED EXTERN  409600   120918",
+    "When storage alerts fire, check ASM free space and rebalance activity before adding files."
+  ),
+  node(
+    "fra_area",
+    "Fast Recovery Area",
+    "Storage",
+    "Managed recovery storage location for archived logs, flashback logs, and backups.",
+    "Central control point for retention, recovery, and space governance.",
+    "If FRA fills up, archiving can stall and primary workload may halt.",
+    "SELECT name, space_limit, space_used, space_reclaimable FROM v$recovery_file_dest;",
+    "NAME       SPACE_LIMIT SPACE_USED SPACE_RECLAIMABLE\n+FRA       429496729600  316109316096  67108864000",
+    "Track FRA trends daily to prevent archive destination full incidents."
   )
 ];
