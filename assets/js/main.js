@@ -287,3 +287,265 @@ function revealOnScroll() {
 renderNav();
 renderFooter();
 revealOnScroll();
+
+// ------------------------------
+// Feedback popup (timed)
+// ------------------------------
+const FEEDBACK_SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+const FEEDBACK_POPUP_DELAY_MS = 45000; // show after user stays on page for ~45s
+const FEEDBACK_MAX_SHOWN_PER_SESSION = 1;
+const FEEDBACK_STORAGE_KEY = "oracle_learn_feedback_popup_v1";
+const FEEDBACK_STORAGE_KEY_SUBMITTED = "oracle_learn_feedback_submitted_v1";
+
+function isLikelyFeedbackConfigured() {
+  return typeof FEEDBACK_SCRIPT_URL === "string" && !FEEDBACK_SCRIPT_URL.includes("PASTE_");
+}
+
+function getTodayKey() {
+  // Local day so users don't get spammed repeatedly across visits.
+  const now = new Date();
+  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+}
+
+function canShowFeedbackPopup() {
+  try {
+    // If already submitted at least once, do not ask again.
+    if (window.localStorage.getItem(FEEDBACK_STORAGE_KEY_SUBMITTED) === "1") {
+      return false;
+    }
+
+    const shownRaw = window.sessionStorage.getItem(`${FEEDBACK_STORAGE_KEY}:shown`);
+    const shownCount = shownRaw ? Number(shownRaw) : 0;
+    if (shownCount >= FEEDBACK_MAX_SHOWN_PER_SESSION) {
+      return false;
+    }
+
+    // Optional daily throttling: store the last day popup was dismissed/shown.
+    // This keeps it calmer even across reloads.
+    const lastDayRaw = window.localStorage.getItem(`${FEEDBACK_STORAGE_KEY}:lastDay`);
+    const today = getTodayKey();
+    if (lastDayRaw === today) {
+      return false;
+    }
+
+    return true;
+  } catch {
+    // If storage is blocked, prefer not to spam.
+    return false;
+  }
+}
+
+function markFeedbackShown() {
+  try {
+    const shownRaw = window.sessionStorage.getItem(`${FEEDBACK_STORAGE_KEY}:shown`);
+    const shownCount = shownRaw ? Number(shownRaw) : 0;
+    window.sessionStorage.setItem(`${FEEDBACK_STORAGE_KEY}:shown`, String(shownCount + 1));
+    window.localStorage.setItem(`${FEEDBACK_STORAGE_KEY}:lastDay`, getTodayKey());
+  } catch {
+    // ignore
+  }
+}
+
+function setFeedbackSubmitted() {
+  try {
+    window.localStorage.setItem(FEEDBACK_STORAGE_KEY_SUBMITTED, "1");
+  } catch {
+    // ignore
+  }
+}
+
+function createFeedbackPopup() {
+  const overlay = document.createElement("div");
+  overlay.className = "feedback-overlay";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-labelledby", "feedback-title");
+
+  const modal = document.createElement("div");
+  modal.className = "feedback-modal";
+  modal.tabIndex = -1;
+
+  modal.innerHTML = `
+    <div class="feedback-header">
+      <h2 id="feedback-title">Quick feedback</h2>
+      <button type="button" class="feedback-close" aria-label="Close feedback form">×</button>
+    </div>
+
+    <p class="feedback-subtitle">Help me improve Oracle Learn. It will take about 30 seconds.</p>
+
+    <form id="feedback-form" class="feedback-form">
+      <label for="feedback-name">Name (optional)</label>
+      <input id="feedback-name" name="name" class="feedback-input" type="text" maxlength="120" placeholder="Your name" />
+
+      <label for="feedback-email">Email (optional)</label>
+      <input id="feedback-email" name="email" class="feedback-input" type="email" maxlength="180" placeholder="you@example.com" />
+
+      <label for="feedback-liked-most">What did you like most?</label>
+      <textarea id="feedback-liked-most" name="likedMost" class="feedback-textarea" required rows="4" placeholder="Example: The labs made learning easy..." maxlength="2000"></textarea>
+
+      <label for="feedback-improvements">What improvements would you suggest?</label>
+      <textarea id="feedback-improvements" name="improvements" class="feedback-textarea" required rows="4" placeholder="Example: Add more real-world DBA scenarios..." maxlength="2000"></textarea>
+
+      <label for="feedback-bugs">Did you find any bugs? (optional)</label>
+      <textarea id="feedback-bugs" name="bugs" class="feedback-textarea" rows="3" placeholder="Tell us the page and what happened..." maxlength="2000"></textarea>
+
+      <label for="feedback-comments">Any other comments? (optional)</label>
+      <textarea id="feedback-comments" name="comments" class="feedback-textarea" rows="3" placeholder="Any final thoughts..." maxlength="2000"></textarea>
+
+      <label for="feedback-rating">How would you rate the website?</label>
+      <select id="feedback-rating" name="rating" class="feedback-select" required>
+        <option value="" selected disabled>Select a rating</option>
+        <option value="5">5</option>
+        <option value="4">4</option>
+        <option value="3">3</option>
+        <option value="2">2</option>
+        <option value="1">1</option>
+      </select>
+
+      <div class="feedback-meta">
+        <input type="hidden" name="page" />
+        <input type="hidden" name="url" />
+        <input type="hidden" name="title" />
+      </div>
+
+      <div class="feedback-actions">
+        <button type="button" class="btn btn-secondary feedback-dismiss">Not now</button>
+        <button type="submit" class="btn btn-primary feedback-submit">Submit feedback</button>
+      </div>
+
+      <p id="feedback-status" class="feedback-status" aria-live="polite"></p>
+    </form>
+  `;
+
+  overlay.appendChild(modal);
+  return overlay;
+}
+
+function wireFeedbackPopup(overlay) {
+  const form = overlay.querySelector("#feedback-form");
+  const likedMostEl = overlay.querySelector("#feedback-liked-most");
+  const statusEl = overlay.querySelector("#feedback-status");
+  const dismissBtn = overlay.querySelector(".feedback-dismiss");
+  const closeBtn = overlay.querySelector(".feedback-close");
+  const pageInput = overlay.querySelector('input[name="page"]');
+  const urlInput = overlay.querySelector('input[name="url"]');
+  const titleInput = overlay.querySelector('input[name="title"]');
+
+  if (!(form instanceof HTMLFormElement)) {
+    return;
+  }
+
+  function close() {
+    overlay.remove();
+  }
+
+  dismissBtn?.addEventListener("click", () => close(), { once: true });
+  closeBtn?.addEventListener("click", () => close(), { once: true });
+  overlay.addEventListener("click", (event) => {
+    if (event.target === overlay) {
+      close();
+    }
+  });
+  document.addEventListener(
+    "keydown",
+    (event) => {
+      if (event.key === "Escape") {
+        close();
+      }
+    },
+    { once: true }
+  );
+
+  if (pageInput && urlInput && titleInput) {
+    pageInput.value = window.location.pathname || "";
+    urlInput.value = window.location.href || "";
+    titleInput.value = document.title || "";
+  }
+
+  // Focus the first question for accessibility/UX.
+  likedMostEl?.focus();
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    statusEl.textContent = "";
+
+    const payloadFromForm = new FormData(form);
+    const payload = {
+      // Field names are chosen to make Apps Script mapping simple.
+      name: String(payloadFromForm.get("name") || ""),
+      email: String(payloadFromForm.get("email") || ""),
+      likedMost: String(payloadFromForm.get("likedMost") || ""),
+      improvements: String(payloadFromForm.get("improvements") || ""),
+      bugs: String(payloadFromForm.get("bugs") || ""),
+      comments: String(payloadFromForm.get("comments") || ""),
+      rating: String(payloadFromForm.get("rating") || ""),
+      page: String(payloadFromForm.get("page") || ""),
+      url: String(payloadFromForm.get("url") || ""),
+      title: String(payloadFromForm.get("title") || ""),
+      submittedAt: new Date().toISOString()
+    };
+
+    // Basic front-end sanity checks (server should also validate).
+    if (!payload.likedMost.trim() || !payload.improvements.trim()) {
+      statusEl.textContent = "Please fill in the required fields.";
+      statusEl.classList.add("is-error");
+      return;
+    }
+
+    if (!isLikelyFeedbackConfigured()) {
+      statusEl.textContent = "Feedback is not configured yet. Please paste the Apps Script URL in `main.js`.";
+      statusEl.classList.add("is-error");
+      return;
+    }
+
+    statusEl.textContent = "Submitting...";
+
+    try {
+      const response = await fetch(FEEDBACK_SCRIPT_URL, {
+        method: "POST",
+        // Send as x-www-form-urlencoded to avoid CORS preflight issues.
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+        },
+        body: new URLSearchParams(payload).toString(),
+        // Avoid caching feedback submissions in some setups.
+        cache: "no-store"
+      });
+
+      if (!response.ok) {
+        const text = await response.text().catch(() => "");
+        throw new Error(text || `Request failed with status ${response.status}`);
+      }
+
+      setFeedbackSubmitted();
+      statusEl.textContent = "Thanks! Your feedback has been submitted.";
+      statusEl.classList.remove("is-error");
+
+      // Close after a short moment so the user sees confirmation.
+      setTimeout(() => close(), 900);
+    } catch (err) {
+      statusEl.textContent = `Could not submit feedback. Please try again later.`;
+      statusEl.classList.add("is-error");
+      // Keep details in console for debugging.
+      console.error("Feedback submit error:", err);
+    }
+  });
+}
+
+function initFeedbackPopup() {
+  if (!canShowFeedbackPopup()) {
+    return;
+  }
+
+  window.setTimeout(() => {
+    if (!canShowFeedbackPopup()) {
+      return;
+    }
+    markFeedbackShown();
+    const overlay = createFeedbackPopup();
+    wireFeedbackPopup(overlay);
+    document.body.appendChild(overlay);
+  }, FEEDBACK_POPUP_DELAY_MS);
+}
+
+initFeedbackPopup();
