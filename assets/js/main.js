@@ -188,6 +188,7 @@ function renderNav() {
             <input id="nav-search-input" class="nav-search-input" type="search" placeholder="Search pages..." autocomplete="off" />
             <div id="nav-search-results" class="nav-search-results" hidden></div>
           </div>
+          <button class="btn btn-secondary nav-feedback-btn" type="button" data-feedback-open>Feedback</button>
         </div>
         <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="mobile-drawer" aria-label="Toggle menu">
           ☰
@@ -201,6 +202,7 @@ function renderNav() {
             <div id="mobile-nav-search-results" class="nav-search-results" hidden></div>
           </div>
           ${NAV_ITEMS.map((item) => `<a href="${item.href}">${item.label}</a>`).join("")}
+          <button class="btn btn-secondary mobile-feedback-btn" type="button" data-feedback-open>Give Feedback</button>
         </div>
       </div>
     </header>
@@ -249,6 +251,7 @@ function renderFooter() {
           <a href="security.html">Security</a>
           <a href="resources.html">Resources</a>
           <a href="blog.html">Blog</a>
+          <button class="footer-feedback-btn" type="button" data-feedback-open>Feedback</button>
         </div>
       </div>
     </footer>
@@ -292,7 +295,7 @@ revealOnScroll();
 // Feedback popup (timed)
 // ------------------------------
 const FEEDBACK_SCRIPT_URL = "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
-const FEEDBACK_POPUP_DELAY_MS = 45000; // show after user stays on page for ~45s
+const FEEDBACK_POPUP_DELAY_MS = 15000; // show after user stays on page for ~15s
 const FEEDBACK_MAX_SHOWN_PER_SESSION = 1;
 const FEEDBACK_STORAGE_KEY = "oracle_learn_feedback_popup_v1";
 const FEEDBACK_STORAGE_KEY_SUBMITTED = "oracle_learn_feedback_submitted_v1";
@@ -421,7 +424,7 @@ function createFeedbackPopup() {
   return overlay;
 }
 
-function wireFeedbackPopup(overlay) {
+function wireFeedbackPopup(overlay, onClose) {
   const form = overlay.querySelector("#feedback-form");
   const likedMostEl = overlay.querySelector("#feedback-liked-most");
   const statusEl = overlay.querySelector("#feedback-status");
@@ -437,6 +440,9 @@ function wireFeedbackPopup(overlay) {
 
   function close() {
     overlay.remove();
+    if (typeof onClose === "function") {
+      onClose();
+    }
   }
 
   dismissBtn?.addEventListener("click", () => close(), { once: true });
@@ -532,6 +538,46 @@ function wireFeedbackPopup(overlay) {
   });
 }
 
+function openFeedbackPopup() {
+  if (document.querySelector(".feedback-overlay")) {
+    return;
+  }
+
+  const overlay = createFeedbackPopup();
+  wireFeedbackPopup(overlay, () => {
+    document.body.classList.remove("is-feedback-open");
+  });
+  document.body.classList.add("is-feedback-open");
+  document.body.appendChild(overlay);
+}
+
+function renderFeedbackLauncher() {
+  if (document.querySelector(".feedback-float-btn")) {
+    return;
+  }
+  const button = document.createElement("button");
+  button.type = "button";
+  button.className = "btn btn-primary feedback-float-btn";
+  button.setAttribute("data-feedback-open", "");
+  button.textContent = "Feedback";
+  document.body.appendChild(button);
+}
+
+function wireFeedbackTriggers() {
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) {
+      return;
+    }
+    const trigger = target.closest("[data-feedback-open]");
+    if (!trigger) {
+      return;
+    }
+    event.preventDefault();
+    openFeedbackPopup();
+  });
+}
+
 function initFeedbackPopup() {
   if (!canShowFeedbackPopup()) {
     return;
@@ -542,10 +588,10 @@ function initFeedbackPopup() {
       return;
     }
     markFeedbackShown();
-    const overlay = createFeedbackPopup();
-    wireFeedbackPopup(overlay);
-    document.body.appendChild(overlay);
+    openFeedbackPopup();
   }, FEEDBACK_POPUP_DELAY_MS);
 }
 
+renderFeedbackLauncher();
+wireFeedbackTriggers();
 initFeedbackPopup();
